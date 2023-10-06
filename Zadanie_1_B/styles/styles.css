@@ -1,0 +1,321 @@
+body {
+    background-color: #7AC6FB;
+    margin: 0;
+}
+
+.road {
+    position: absolute;
+    top: 75%;
+    background-color: #000;
+    width: 100%;
+    height: 25%;
+}
+
+.sun {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 10vh;
+    height: 10vh;
+    background-color: #fcfc19;
+    border-radius: 50%;
+    box-shadow: 8px 8px rgba(0,0,0,0.2);
+}
+
+.hedge {
+    position: absolute;
+    background-color: green;
+    width: 100%;
+    height: 12%;
+    top: 61%;
+}
+
+.cloud {
+    position: absolute;
+    top:23%;
+    left:57%;
+    transform: translate(-50%,-50%);
+}
+
+.cloud2 {
+    position: absolute;
+    top:17%;
+    left:32%;
+    transform: translate(-50%,-50%);
+}
+
+.cloud3 {
+    position: absolute;
+    top:13%;
+    left:82%;
+    transform: translate(-50%,-50%);
+}
+
+.cloud-bottom {
+    background: rgba(255, 255, 255);
+    width: 15vh;
+    height: 5vh;
+    border-radius: 7.5vh;
+    box-shadow: 1vh 1vh rgba(0,0,0,0.2);
+}
+.cloud-middle {
+    content: '';
+    background: rgba(255, 255, 255);
+    position: absolute;
+    width: 5vh;
+    height: 5vh;
+    border-radius: 50%;
+    top: -2.5vh;
+    left: 2.5vh;
+}
+
+.cloud-top {
+    content: '';
+    background: rgba(255, 255, 255);
+    position: absolute;
+    width: 8.5vh;
+    height: 7.5vh;
+    border-radius: 50%;
+    top: -4.5vh;
+    right: 2vh;
+}
+
+.curb {
+    position: absolute;
+    background-color: grey;
+    height: 2.5%;
+    width: 100%;
+    top: 72.5%;
+    border-top: 0.6vh solid black;
+}
+.sun-ray {
+    border-left: 0.35vh solid #fcfc19;
+    height: 3.75vh;
+}
+
+.top {
+    position: absolute;
+    top: -3.75vh;
+    left: 4.825vh;
+    transform: rotate(0deg);
+}
+
+.bottom {
+    position: absolute;
+    top: 10vh;
+    left: 4.825vh;
+    transform: rotate(180deg);
+}
+
+.right {
+    position: absolute;
+    top: 3.125vh;
+    left: 11.750vh;
+    transform: rotate(90deg);
+}
+
+.left {
+    position: absolute;
+    top: 3.125vh;
+    left: -1.875vh;
+    transform: rotate(-90deg);
+}
+
+.top-left {
+    position: absolute;
+    top: -1.187vh;
+    left: 0.139vh;
+    transform: rotate(135deg);
+
+}
+
+.top-right {
+    position: absolute;
+    top: -1.187vh;
+    left: 9.861vh;
+    transform: rotate(45deg);
+
+}
+
+.bottom-left {
+    position: absolute;
+    top: 7.825vh;
+    left: -0.139vh;
+    transform: rotate(225deg);
+}
+
+.bottom-right {
+    position: absolute;
+    top: 7.825vh;
+    left: 9.861vh;
+    transform: rotate(315deg);
+}
+
+.line {
+    position: absolute;
+    background-color: white;
+    width: 10%;
+    height: 3.5%;
+    top: 50%;
+}
+
+.first {
+    left: 10%;
+}
+
+.second {
+    left: 30%;
+}
+
+.third {
+    left: 50%;
+}
+
+.fourth {
+    left: 70%;
+}
+
+.fifth {
+    left: 90%;
+}
+
+.car {
+    position: absolute;
+    top: 75%;
+    left: 50%;
+}
+
+.wheel {
+    z-index: 10;
+}
+
+.left-tyre {
+    position: absolute;
+}
+
+.right-tyre {
+    position: absolute;
+    left: 25vh;
+}
+
+.tyre {
+    background-color: black;
+    width: 6vh;
+    height: 6vh;
+    border-radius: 50%;
+}
+
+.tyre-outline {
+    border: 3px solid lightgrey;
+    width: 6vh;
+    height: 6vh;
+    border-radius: 50%;
+}
+
+.tyre-inside {
+    position: relative;
+    top: 1.5vh;
+    left: 1.5vh;
+    background-color: lightgrey;
+    width: 3vh;
+    height: 3vh;
+    border-radius: 50%;
+}
+
+.lower-part {
+    position: absolute;
+    height: 10vh;
+    width: 40vh;
+    top: -6vh;
+    left: -4.5vh;
+    background: red;
+    border-radius: 15%;
+    border-top-left-radius: 50%;
+}
+
+.upper-part {
+    position: absolute;
+    top: -12vh;
+    left: 4.5vh;
+    border-bottom: 10vh solid red;
+    border-left: 2.5vh solid transparent;
+    border-right: 2.5vh solid transparent;
+    height: 0;
+    width: 25vh;
+    border-top-right-radius: 10vh;
+    border-top-left-radius: 15vh;
+    transform: rotate(5deg);
+}
+
+.front-side {
+    position: absolute;
+    top: 10vh;
+    left: -9vh;
+}
+
+.back-side-upper {
+    position: absolute;
+    top: 5.5vh;
+    left: 25vh;
+}
+
+.back-side-lower {
+    position: absolute;
+    top: 8vh;
+    left: 25.2vh;
+    transform: rotate(180deg);
+}
+
+.lights {
+    width: 2vh;
+    height: 4vh;
+    background-color: yellow;
+    border-radius: 0.5vh 1.5vh 0.3vh 0.1vh;
+    transform: rotate(-95deg);
+    border: 0.1vh solid black;
+}
+
+.stop-lights {
+    width: 2vh;
+    height: 4vh;
+    background-color: orange;
+    border-radius: 1.5vh 0.5vh 0.3vh 0.1vh;
+    transform: rotate(-95deg);
+    border: 0.1vh solid black;
+}
+
+.window-front {
+    position: absolute;
+    top: 1.5vh;
+    width: 11.5vh;
+    height: 5vh;
+    border: 0.5vh solid #07768f;
+    border-radius: 10vh 1.5vh 1.5vh 1.5vh;
+    border-top-left-radius: 100%;
+    transform: rotate(-3deg);
+    background-color: #81c7c1;
+}
+
+.window-back {
+    position: absolute;
+    top: 0.75vh;
+    left: 13.5vh;
+    width: 10.5vh;
+    height: 5vh;
+    border: 0.5vh solid #07768f;
+    border-radius: 1.5vh 10vh 1.5vh 1.5vh;
+    border-top-right-radius: 100%;
+    transform: rotate(-3deg);
+    background-color: #81c7c1;
+}
+
+.handle {
+    position: absolute;
+    top: 9vh;
+    left: 8.5vh;
+    width: 3vh;
+    height: 0.7vh;
+    background-color: black;
+    transform: rotate(-3deg);
+    border-radius: 25%;
+}
