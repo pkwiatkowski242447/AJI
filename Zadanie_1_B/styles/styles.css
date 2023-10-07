@@ -206,13 +206,13 @@ body {
 }
 
 .tyre-outline {
-    border: 3px solid lightgrey;
+    border: 2px solid lightgrey;
     width: 6vh;
     height: 6vh;
     border-radius: 50%;
 }
 
-.tyre-inside {
+.rim {
     position: relative;
     top: 1.5vh;
     left: 1.5vh;
@@ -224,27 +224,54 @@ body {
 
 .lower-part {
     position: absolute;
-    height: 10vh;
-    width: 40vh;
-    top: -6vh;
+    height: 9vh;
+    width: 42vh;
+    top: -5vh;
     left: -4.5vh;
-    background: red;
+    background: #583C7A;
     border-radius: 15%;
-    border-top-left-radius: 50%;
+    border-top-left-radius: 38%;
+    border-bottom-right-radius: 30%;
 }
 
 .upper-part {
     position: absolute;
-    top: -12vh;
-    left: 4.5vh;
-    border-bottom: 10vh solid red;
-    border-left: 2.5vh solid transparent;
-    border-right: 2.5vh solid transparent;
-    height: 0;
-    width: 25vh;
-    border-top-right-radius: 10vh;
-    border-top-left-radius: 15vh;
-    transform: rotate(5deg);
+    top: -10.2vh;
+    left: 5.5vh;
+    background: #583C7A;
+    height:8.2vh;
+    width: 31.9vh;
+    border-top-left-radius: 100vh;
+    border-top-right-radius: 50vh;
+    border-bottom-right-radius: 20vh;
+
+    transform: rotate(-1deg);
+}
+
+.side-front-window {
+    position: absolute;
+    top: 1vh;
+    left: 2vh;
+    width: 8vh;
+    height: 5vh;
+    border: 0.2vh solid black;
+    border-radius: 10vh 1.5vh 1.5vh 1.5vh;
+    border-top-left-radius: 100%;
+    transform: rotate(-1deg);
+    background-color: #626468;
+}
+
+.side-rear-window {
+    position: absolute;
+    top: 0.75vh;
+    left: 13.5vh;
+    width: 10.5vh;
+    height: 5vh;
+    border: 0.2vh solid black;
+    border-radius: 1.5vh 10vh 1.5vh 1.5vh;
+    border-top-right-radius: 100%;
+    transform: rotate(-3deg);
+    background-color: #626468;
 }
 
 .front-side {
@@ -284,38 +311,15 @@ body {
     border: 0.1vh solid black;
 }
 
-.window-front {
-    position: absolute;
-    top: 1.5vh;
-    width: 11.5vh;
-    height: 5vh;
-    border: 0.5vh solid #07768f;
-    border-radius: 10vh 1.5vh 1.5vh 1.5vh;
-    border-top-left-radius: 100%;
-    transform: rotate(-3deg);
-    background-color: #81c7c1;
-}
 
-.window-back {
-    position: absolute;
-    top: 0.75vh;
-    left: 13.5vh;
-    width: 10.5vh;
-    height: 5vh;
-    border: 0.5vh solid #07768f;
-    border-radius: 1.5vh 10vh 1.5vh 1.5vh;
-    border-top-right-radius: 100%;
-    transform: rotate(-3deg);
-    background-color: #81c7c1;
-}
-
-.handle {
+.door-handle {
     position: absolute;
     top: 9vh;
     left: 8.5vh;
     width: 3vh;
     height: 0.7vh;
-    background-color: black;
+    background-color: #583C7A;
     transform: rotate(-3deg);
     border-radius: 25%;
+    border: 1px solid black;
 }
