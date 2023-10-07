@@ -206,7 +206,7 @@ body {
 }
 
 .tyre-outline {
-    border: 2px solid lightgrey;
+    border: 1.5px solid lightgrey;
     width: 6vh;
     height: 6vh;
     border-radius: 50%;
