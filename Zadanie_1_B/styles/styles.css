@@ -250,76 +250,134 @@ body {
 
 .side-front-window {
     position: absolute;
-    top: 1vh;
-    left: 2vh;
-    width: 8vh;
-    height: 5vh;
+    top: 0.8vh;
+    left: 2.1vh;
+    width: 9vh;
+    height: 4.6vh;
     border: 0.2vh solid black;
-    border-radius: 10vh 1.5vh 1.5vh 1.5vh;
+    border-radius: 10vh 1vh 1vh 1vh;
     border-top-left-radius: 100%;
-    transform: rotate(-1deg);
+    transform: rotate(0deg);
     background-color: #626468;
 }
 
 .side-rear-window {
     position: absolute;
-    top: 0.75vh;
-    left: 13.5vh;
-    width: 10.5vh;
-    height: 5vh;
+    top: 0.8vh;
+    left: 11.8vh;
+    width: 9vh;
+    height: 4.6vh;
     border: 0.2vh solid black;
-    border-radius: 1.5vh 10vh 1.5vh 1.5vh;
-    border-top-right-radius: 100%;
-    transform: rotate(-3deg);
+    border-radius: 1vh 0 0 1vh;
+    transform: rotate(0deg);
     background-color: #626468;
 }
 
-.front-side {
+.side-back-window {
     position: absolute;
-    top: 10vh;
-    left: -9vh;
+    top: 0.8vh;
+    left: 20.5vh;
+    width: 9vh;
+    height: 4.6vh;
+    border: 0.2vh solid black;
+    border-radius: 0 1vh 1vh 0;
+    transform: rotate(0deg);
+    background-color: #626468;
 }
 
-.back-side-upper {
+.headlight {
+    position: absolute;
+    top: 6.2vh;
+    left: -8.4vh;
+}
+
+.taillights {
     position: absolute;
     top: 5.5vh;
-    left: 25vh;
+    left: 28vh;
 }
 
-.back-side-lower {
+.stop-lights {
     position: absolute;
-    top: 8vh;
-    left: 25.2vh;
-    transform: rotate(180deg);
+    top: 7.5vh;
+    left: 28vh;
+    transform: rotate(90deg);
 }
 
-.lights {
-    width: 2vh;
-    height: 4vh;
+.headlights {
+    width: 1.7vh;
+    height: 3.9vh;
     background-color: yellow;
     border-radius: 0.5vh 1.5vh 0.3vh 0.1vh;
-    transform: rotate(-95deg);
+    transform: rotate(-90deg);
     border: 0.1vh solid black;
 }
 
 .stop-lights {
-    width: 2vh;
-    height: 4vh;
-    background-color: orange;
+    width: 1.7vh;
+    height: 3.9vh;
+    background-color: darkred;
     border-radius: 1.5vh 0.5vh 0.3vh 0.1vh;
-    transform: rotate(-95deg);
+    transform: rotate(-90deg);
     border: 0.1vh solid black;
 }
 
-
-.door-handle {
+.door-handle1 {
     position: absolute;
-    top: 9vh;
-    left: 8.5vh;
+    top: 7.8vh;
+    left: 8vh;
     width: 3vh;
     height: 0.7vh;
     background-color: #583C7A;
-    transform: rotate(-3deg);
     border-radius: 25%;
     border: 1px solid black;
+}
+
+.door-handle2 {
+    position: absolute;
+    top: 7.8vh;
+    left: 17.7vh;
+    width: 3vh;
+    height: 0.7vh;
+    background-color: #583C7A;
+    border-radius: 25%;
+    border: 1px solid black;
+}
+
+.side-stripe{
+    position: absolute;
+    top: 11.5vh;
+    left: 1.35vh;
+    background-color: #34303E;
+    width: 17.8vh;
+    height: 0.6vh;
+}
+
+.roof-bar1{
+    position: absolute;
+    top: -0.8vh;
+    left: 10vh;
+    background-color: #34303E;
+    width: 1vh;
+    height: 0.8vh;
+}
+
+.roof-bar2{
+    position: absolute;
+    top: -0.8vh;
+    left: 24vh;
+    background-color: #34303E;
+    width: 1vh;
+    height: 0.8vh;
+}
+
+.roof-box{
+    position: absolute;
+    top: -2.5vh;
+    left: 10vh;
+    background-color: #34303E;
+    width: 15vh;
+    height: 2vh;
+    border-radius: 1.5vh 0.3vh 0.3vh 0.3vh;
+    border:  0.1vh solid black;
 }
