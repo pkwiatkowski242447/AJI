@@ -73,6 +73,35 @@ let updateTodoList = function() {
         todoListDiv.removeChild(todoListDiv.firstChild);
     }
 
+    // Adding table header row with appropriate labels.
+
+    let newRow = document.createElement("tr");
+    let titleLabel = document.createElement("th");
+    let descriptionLabel = document.createElement("th");
+    let placeLabel = document.createElement("th");
+    let dateLabel = document.createElement("th");
+    let deleteButtonLabel = document.createElement("th");
+
+    let titleLabelContent = document.createTextNode("Title");
+    let descriptionLabelContent = document.createTextNode("Description");
+    let placeLabelContent = document.createTextNode("Place");
+    let dateLabelContent = document.createTextNode("Date");
+    let deleteButtonLabelContent = document.createTextNode("Delete");
+
+    titleLabel.appendChild(titleLabelContent);
+    descriptionLabel.appendChild(descriptionLabelContent);
+    placeLabel.appendChild(placeLabelContent);
+    dateLabel.appendChild(dateLabelContent);
+    deleteButtonLabel.appendChild(deleteButtonLabelContent);
+
+    newRow.appendChild(titleLabel);
+    newRow.appendChild(descriptionLabel);
+    newRow.appendChild(placeLabel);
+    newRow.appendChild(dateLabel);
+    newRow.appendChild(deleteButtonLabel);
+
+    todoListDiv.appendChild(newRow);
+
     // Adding all elements from todoList into todoListView div, but of course it also includes filtering.
 
     // Getting string input from inputSearch (so basically text filter for all the tasks).
@@ -90,11 +119,18 @@ let updateTodoList = function() {
         ) {
             // Creating new element out of information read from todoList (taking title and description of the task
             // and putting them together into a paragraph which later is added to the todoListView div).
-            let newElement = document.createElement("p");
-            let newContent = document.createTextNode(todoList[todo].title + " " +
-                todoList[todo].description);
-            newElement.appendChild(newContent);
-            todoListDiv.appendChild(newElement);
+
+            newRow = document.createElement("tr");
+            titleLabel = document.createElement("td");
+            descriptionLabel = document.createElement("td");
+            placeLabel = document.createElement("td");
+            dateLabel = document.createElement("td");
+            deleteButtonLabel = document.createElement("td");
+
+            titleLabelContent = document.createTextNode(todoList[todo].title);
+            descriptionLabelContent = document.createTextNode(todoList[todo].description);
+            placeLabelContent = document.createTextNode(todoList[todo].place);
+            dateLabelContent = document.createTextNode(todoList[todo].dueDate);
 
             // Creating button for deletion of the element read from JSONbin.io
             let newDeleteButton = document.createElement("input");
@@ -105,8 +141,20 @@ let updateTodoList = function() {
                     deleteTodo(todo);
                 });
 
+            titleLabel.appendChild(titleLabelContent);
+            descriptionLabel.appendChild(descriptionLabelContent);
+            placeLabel.appendChild(placeLabelContent);
+            dateLabel.appendChild(dateLabelContent);
             // Adding this delete button as a child of a "task" element.
-            newElement.appendChild(newDeleteButton);
+            deleteButtonLabel.appendChild(newDeleteButton);
+
+            newRow.appendChild(titleLabel);
+            newRow.appendChild(descriptionLabel);
+            newRow.appendChild(placeLabel);
+            newRow.appendChild(dateLabel);
+            newRow.appendChild(deleteButtonLabel);
+
+            todoListDiv.appendChild(newRow);
         }
     }
 }
