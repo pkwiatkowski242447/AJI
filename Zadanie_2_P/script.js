@@ -28,6 +28,31 @@ $.ajax({
     }
 });
 
+let initializeForm = function() {
+    let dateSearch = $('#dateSearch');
+
+    let dateSearchFrom = $('<label>')
+        .attr("id", "dateSearchFromId")
+        .attr("for", "dateSearchFrom")
+        .append("From")
+        .append(
+            $('<input type="date" id="dateSearchFrom">')
+        );
+    let dateSearchTo = $('<label>')
+        .attr("id", "dateSearchToId")
+        .attr("for", "dateSearchTo")
+        .append("To")
+        .append(
+            $('<input type="date" id="dateSearchTo">')
+        );
+
+    dateSearch.text("By date: ");
+    dateSearch.append(dateSearchFrom);
+    dateSearch.append(dateSearchTo);
+}
+
+initializeForm();
+
 // Call to the function initiating todoList with two sample to-do tasks.
 // initList();
 
@@ -62,9 +87,47 @@ let initList = function() {
     }
 }
 
+// This function manages deleting items from todoList (and as a result from todoListView div). It is achieved by
+// splicing entire collection of tasks on index-th index and removing one element (meaning of splice arguments).
+let deleteTodo = function(index) {
+    todoList.splice(index,1);
+    // After element is removed - updateJSONbin function must be invoked - in order to change the state of the collection
+    // of tasks in JSONbin bin.
+    updateJSONbin();
+}
+
+// This function manages adding tasks to the list. It performs this action by reading values from the form - creating
+// appropriate object representing the task and adding it to the todoList.
+let addTodo = function() {
+    // Get the elements in the form
+    let inputTitle = $('#inputTitle')[0];
+    let inputDescription = $('#inputDescription')[0];
+    let inputPlace = $('#inputPlace')[0];
+    let inputDate = $('#inputDate')[0];
+    // Get the values from the form
+    let newTitle = inputTitle.value;
+    let newDescription = inputDescription.value;
+    let newPlace = inputPlace.value;
+    let newDate = new Date(inputDate.value);
+    newDate = newDate.toISOString().split('T')[0];
+    // Create new item - that is an object representing a task - using values read from the form.
+    let newTodo = {
+        title: newTitle,
+        description: newDescription,
+        place: newPlace,
+        dueDate: newDate
+    };
+    // Add item to the list
+    todoList.push(newTodo);
+
+    // After new task is added to the todoList, updateJSON bin function must be invoked to change the state
+    // of the JSONbin bin.
+    updateJSONbin();
+}
+
 let updateTodoList = function() {
     // Putting reference to todoListView div into todoListDiv variable. Used later for editing list of shown tasks.
-    let todoListDiv = document.getElementById("todoListView");
+    let todoListDiv = $('#todoListView');
 
     // Since this function is called every one second - then we remove any nodes that are children of todoListView div
     // since they could have been edited (e.g. deleted) so they again will be taken from todoList and put as children nodes
@@ -73,90 +136,88 @@ let updateTodoList = function() {
         todoListDiv.removeChild(todoListDiv.firstChild);
     }
 
-    // Adding table header row with appropriate labels.
+    // Adding table tag with table header row with appropriate labels.
 
-    let newRow = document.createElement("tr");
-    let titleLabel = document.createElement("th");
-    let descriptionLabel = document.createElement("th");
-    let placeLabel = document.createElement("th");
-    let dateLabel = document.createElement("th");
-    let deleteButtonLabel = document.createElement("th");
+    let table = $('<table>');
+    let tableRow = $('<tr>');
 
-    let titleLabelContent = document.createTextNode("Title");
-    let descriptionLabelContent = document.createTextNode("Description");
-    let placeLabelContent = document.createTextNode("Place");
-    let dateLabelContent = document.createTextNode("Date");
-    let deleteButtonLabelContent = document.createTextNode("Delete");
+    let titleLabel = $('<th>').text("Title");
+    let descriptionLabel = $('<th>').text("Description");
+    let placeLabel = $('<th>').text("Place");
+    let dateLabel = $('<th>').text("Date");
+    let deleteLabel = $('<th>').text("Delete");
 
-    titleLabel.appendChild(titleLabelContent);
-    descriptionLabel.appendChild(descriptionLabelContent);
-    placeLabel.appendChild(placeLabelContent);
-    dateLabel.appendChild(dateLabelContent);
-    deleteButtonLabel.appendChild(deleteButtonLabelContent);
-
-    newRow.appendChild(titleLabel);
-    newRow.appendChild(descriptionLabel);
-    newRow.appendChild(placeLabel);
-    newRow.appendChild(dateLabel);
-    newRow.appendChild(deleteButtonLabel);
-
-    todoListDiv.appendChild(newRow);
+    todoListDiv.html(
+        table.append(
+            tableRow
+                .append(titleLabel)
+                .append(descriptionLabel)
+                .append(placeLabel)
+                .append(dateLabel)
+                .append(deleteLabel)
+        )
+    );
 
     // Adding all elements from todoList into todoListView div, but of course it also includes filtering.
 
     // Getting string input from inputSearch (so basically text filter for all the tasks).
-    let filterInput = document.getElementById("inputSearch");
+    let filterInput = $('#inputSearchByPhrase')[0];
+    let dateStartValue = $('#dateSearchFrom')[0].value;
+    let dateEndValue = $('#dateSearchTo')[0].value;
+
     // Loop executing for every task in todoList.
     for (let todo in todoList) {
         // Task is added to todoList as long as filter is an empty string or its title or description includes text
         // input by the use to the text filter. If none of these are met - then a task is not added to the todoListView div.
         // First condition in this conditional statement must remain with == operator since if user does not input anything
         // it could result in getting null value and as a result - not add any task to the todoListView div.
+        let dueDateValue = todoList[todo].dueDate;
+        let flag = checkDate(dateStartValue, dateEndValue, dueDateValue)
         if (
-            (filterInput.value === "") ||
+            (((filterInput.value == "") ||
             (todoList[todo].title.includes(filterInput.value)) ||
-            (todoList[todo].description.includes(filterInput.value))
+            (todoList[todo].description.includes(filterInput.value))) && flag)
         ) {
             // Creating new element out of information read from todoList (taking title and description of the task
             // and putting them together into a paragraph which later is added to the todoListView div).
 
-            newRow = document.createElement("tr");
-            titleLabel = document.createElement("td");
-            descriptionLabel = document.createElement("td");
-            placeLabel = document.createElement("td");
-            dateLabel = document.createElement("td");
-            deleteButtonLabel = document.createElement("td");
+            tableRow = $('<tr>');
 
-            titleLabelContent = document.createTextNode(todoList[todo].title);
-            descriptionLabelContent = document.createTextNode(todoList[todo].description);
-            placeLabelContent = document.createTextNode(todoList[todo].place);
-            dateLabelContent = document.createTextNode(todoList[todo].dueDate);
+            titleLabel = $('<td>').text(todoList[todo].title);
+            descriptionLabel = $('<td>').text(todoList[todo].description);
+            placeLabel = $('<td>').text(todoList[todo].place);
+            dateLabel = $('<td>').text(todoList[todo].dueDate);
 
-            // Creating button for deletion of the element read from JSONbin.io
-            let newDeleteButton = document.createElement("input");
-            newDeleteButton.type = "button";
-            newDeleteButton.value = "x";
-            newDeleteButton.addEventListener("click",
+            let newDeleteButton = $('<input type="button" value="x">');
+            newDeleteButton[0].addEventListener("click",
                 function() {
                     deleteTodo(todo);
-                });
+                }
+            )
+            deleteLabel.append(newDeleteButton);
 
-            titleLabel.appendChild(titleLabelContent);
-            descriptionLabel.appendChild(descriptionLabelContent);
-            placeLabel.appendChild(placeLabelContent);
-            dateLabel.appendChild(dateLabelContent);
-            // Adding this delete button as a child of a "task" element.
-            deleteButtonLabel.appendChild(newDeleteButton);
-
-            newRow.appendChild(titleLabel);
-            newRow.appendChild(descriptionLabel);
-            newRow.appendChild(placeLabel);
-            newRow.appendChild(dateLabel);
-            newRow.appendChild(deleteButtonLabel);
-
-            todoListDiv.appendChild(newRow);
+            table.append(
+                tableRow
+                    .append(titleLabel)
+                    .append(descriptionLabel)
+                    .append(placeLabel)
+                    .append(dateLabel)
+                    .append(newDeleteButton)
+            )
         }
     }
+}
+
+let checkDate = function(startDate, endDate, dueDate) {
+    let returnValue = false;
+    if (startDate == "" && endDate == "") {
+        returnValue = true;
+    } else if (startDate == "" && endDate != "" && dueDate <= endDate) {
+        returnValue = true;
+    } else if (startDate != "" && endDate == "" && dueDate >= startDate) {
+        returnValue = true;
+    } else returnValue = dueDate <= endDate && dueDate >= startDate;
+    return returnValue;
 }
 
 // Setting interval for updates of to-do list tasks (in milliseconds - so basically the list is updated
@@ -183,41 +244,4 @@ let updateJSONbin = function() {
             console.log(err.response);
         }
     });
-}
-
-// This function manages adding tasks to the list. It performs this action by reading values from the form - creating
-// appropriate object representing the task and adding it to the todoList.
-let addTodo = function() {
-    // Get the elements in the form
-    let inputTitle = document.getElementById("inputTitle");
-    let inputDescription = document.getElementById("inputDescription");
-    let inputPlace = document.getElementById("inputPlace");
-    let inputDate = document.getElementById("inputDate");
-    // Get the values from the form
-    let newTitle = inputTitle.value;
-    let newDescription = inputDescription.value;
-    let newPlace = inputPlace.value;
-    let newDate = new Date(inputDate.value);
-    // Create new item - that is a object representing a task - using values read from the form.
-    let newTodo = {
-        title: newTitle,
-        description: newDescription,
-        place: newPlace,
-        dueDate: newDate
-    };
-    // Add item to the list
-    todoList.push(newTodo);
-
-    // After new task is added to the todoList, updateJSON bin function must be invoked to change the state
-    // of the JSONbin bin.
-    updateJSONbin();
-}
-
-// This function manages deleting items from todoList (and as a result from todoListView div). It is achieved by
-// splicing entire collection of tasks on index-th index and removing one element (meaning of splice arguments).
-let deleteTodo = function(index) {
-    todoList.splice(index,1);
-    // After element is removed - updateJSONbin function must be invoked - in order to change the state of the collection
-    // of tasks in JSONbin bin.
-    updateJSONbin();
 }
