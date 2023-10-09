@@ -99,16 +99,11 @@ let deleteTodo = function(index) {
 // This function manages adding tasks to the list. It performs this action by reading values from the form - creating
 // appropriate object representing the task and adding it to the todoList.
 let addTodo = function() {
-    // Get the elements in the form
-    let inputTitle = $('#inputTitle')[0];
-    let inputDescription = $('#inputDescription')[0];
-    let inputPlace = $('#inputPlace')[0];
-    let inputDate = $('#inputDate')[0];
     // Get the values from the form
-    let newTitle = inputTitle.value;
-    let newDescription = inputDescription.value;
-    let newPlace = inputPlace.value;
-    let newDate = new Date(inputDate.value);
+    let newTitle = $('#inputTitle')[0].value;
+    let newDescription = $('#inputDescription')[0].value;
+    let newPlace = $('#inputPlace')[0].value;
+    let newDate = new Date($('#inputDate')[0].value);
     newDate = newDate.toISOString().split('T')[0];
     // Create new item - that is an object representing a task - using values read from the form.
     let newTodo = {
@@ -132,9 +127,10 @@ let updateTodoList = function() {
     // Since this function is called every one second - then we remove any nodes that are children of todoListView div
     // since they could have been edited (e.g. deleted) so they again will be taken from todoList and put as children nodes
     // into todoListView div.
-    while (todoListDiv.firstChild) {
-        todoListDiv.removeChild(todoListDiv.firstChild);
-    }
+
+    // JQuery function empty() does remove all children nodes of a given node.
+
+    todoListDiv.empty();
 
     // Adding table tag with table header row with appropriate labels.
 
