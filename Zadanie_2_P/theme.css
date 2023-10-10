@@ -1,13 +1,3 @@
-body {
-    background-color: #5ccbed;
-    margin: 0;
-}
-
-label {
-    display: block;
-    clear: both;
-}
-
 .from-input-label {
     width: 30vh;
     height: 15vh;

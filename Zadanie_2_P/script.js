@@ -148,7 +148,13 @@ let updateTodoList = function() {
     // Adding table tag with table header row with appropriate labels.
 
     let table = $('<table>');
+    let tableHeader = $('<thead>')
+        .addClass("table-dark");
+    let tableBody  = $('<tbody>')
+        .addClass("table-group-divider");
     let tableRow = $('<tr>');
+
+    let tableCaption = $('<caption>').text("List of declared tasks");
 
     let titleLabel = $('<th>').text("Title");
     let descriptionLabel = $('<th>').text("Description");
@@ -157,14 +163,19 @@ let updateTodoList = function() {
     let deleteLabel = $('<th>').text("Delete");
 
     todoListDiv.html(
-        table.append(
-            tableRow
-                .append(titleLabel)
-                .append(descriptionLabel)
-                .append(placeLabel)
-                .append(dateLabel)
-                .append(deleteLabel)
+        table
+            .append(tableCaption)
+            .append(
+            tableHeader.append(
+                tableRow
+                    .append(titleLabel)
+                    .append(descriptionLabel)
+                    .append(placeLabel)
+                    .append(dateLabel)
+                    .append(deleteLabel)
+            )
         )
+            .append(tableBody)
     );
 
     // Adding all elements from todoList into todoListView div, but of course it also includes filtering.
@@ -190,14 +201,19 @@ let updateTodoList = function() {
             // Creating new element out of information read from todoList (taking title and description of the task
             // and putting them together into a paragraph which later is added to the todoListView div).
 
-            tableRow = $('<tr>');
+            tableRow = $('<tr>')
+                .css("border", "1px solid grey");
 
             titleLabel = $('<td>').text(todoList[todo].title);
             descriptionLabel = $('<td>').text(todoList[todo].description);
             placeLabel = $('<td>').text(todoList[todo].place);
             dateLabel = $('<td>').text(todoList[todo].dueDate);
 
-            let newDeleteButton = $('<input type="button" value="x">');
+            let newDeleteButton = $('<input type="button" value="Remove">');
+            newDeleteButton
+                .css("border", "none")
+                .css("width", "100%")
+                .css("height", "90%")
             newDeleteButton[0].addEventListener("click",
                 function() {
                     deleteTodo(todo);
@@ -205,7 +221,7 @@ let updateTodoList = function() {
             )
             deleteLabel.append(newDeleteButton);
 
-            table.append(
+            tableBody.append(
                 tableRow
                     .append(titleLabel)
                     .append(descriptionLabel)
@@ -215,6 +231,9 @@ let updateTodoList = function() {
             )
         }
     }
+
+    table.addClass("table")
+        .addClass("table-hover");
 }
 
 let checkDate = function(startDate, endDate, dueDate) {

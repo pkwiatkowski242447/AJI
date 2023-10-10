@@ -13,54 +13,64 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>MyNotes</h1>
-    <div id="todoListView"></div>
-
-    <div>
-        <fieldset class="info-fieldset">
-            <legend class="capital-header">Search filters</legend>
-            <fieldset>
-                <legend class="lesser-header">Filtering by phrase</legend>
-                <div class="input-group mb-3">
-                    <label  class="input-group-text" for="inputSearchByPhrase">Enter desired phrase</label>
-                    <input type="text" class="form-control" id="inputSearchByPhrase" placeholder="Type Your search here...">
-                </div>
-            </fieldset>
-            <fieldset id="dateSearch">
-                <legend class="lesser-header">Filtering by date range</legend>
-            </fieldset>
-        </fieldset>
-    </div>
-
-    <form>
-        <fieldset class="info-fieldset">
-            <legend class="capital-header">Adding new task</legend>
-            <fieldset>
-                <legend class="lesser-header">Overall information about the task</legend>
-                <div class="input-group mb-3">
-                    <label class="input-group-text" for="inputTitle">Title</label>
-                    <input type="text" class="form-control" id="inputTitle" placeholder="Enter the tasks title..." required>
-                </div>
-                <div class="input-group mb-3">
-                    <label class="input-group-text" for="inputDescription">Description</label>
-                    <input type="text" class="form-control" id="inputDescription" placeholder="Describe the task here..." required>
-                </div>
-            </fieldset>
-            <fieldset>
-                <legend class="lesser-header">Task's details</legend>
-                <div class="input-group mb-3">
-                    <label class="input-group-text" for="inputPlace">Place</label>
-                    <input type="text" class="form-control" id="inputPlace" placeholder="Task's destination..." required>
-                </div>
-                <div class="input-group mb-3">
-                    <label  class="input-group-text" for="inputDate">Due date</label>
-                    <input type="date" class="form-control" id="inputDate" required>
-                </div>
-            </fieldset>
-        </fieldset>
-    </form>
     <div class="text-center">
-        <button type="submit" class="submit-button btn btn-info" onclick="addTodo()">Add</button>
+        <h1 class="display-2 mb-5">MyNotes</h1>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div id="todoListView" class="text-center"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col table-col">
+                <fieldset class="info-fieldset">
+                    <legend class="capital-header">Search filters</legend>
+                    <fieldset>
+                        <legend class="lesser-header">Filtering by phrase</legend>
+                        <div class="input-group mb-3">
+                            <label  class="input-group-text" for="inputSearchByPhrase">Enter desired phrase</label>
+                            <input type="text" class="form-control" id="inputSearchByPhrase" placeholder="Type Your search here...">
+                        </div>
+                    </fieldset>
+                    <fieldset id="dateSearch">
+                        <legend class="lesser-header">Filtering by date range</legend>
+                    </fieldset>
+                </fieldset>
+            </div>
+            <div class="col">
+                <form>
+                    <fieldset class="info-fieldset">
+                        <legend class="capital-header">Adding new task</legend>
+                        <fieldset>
+                            <legend class="lesser-header">Overall information about the task</legend>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="inputTitle">Title</label>
+                                <input type="text" class="form-control" id="inputTitle" placeholder="Enter the tasks title..." required>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="inputDescription">Description</label>
+                                <input type="text" class="form-control" id="inputDescription" placeholder="Describe the task here..." required>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend class="lesser-header">Task's details</legend>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="inputPlace">Place</label>
+                                <input type="text" class="form-control" id="inputPlace" placeholder="Task's destination..." required>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label  class="input-group-text" for="inputDate">Due date</label>
+                                <input type="date" class="form-control" id="inputDate" required>
+                            </div>
+                        </fieldset>
+                    </fieldset>
+                </form>
+                <div class="text-center">
+                    <button type="submit" class="submit-button btn btn-info" onclick="addTodo()">Add</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
