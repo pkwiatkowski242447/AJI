@@ -233,7 +233,8 @@ let updateTodoList = function() {
     }
 
     table.addClass("table")
-        .addClass("table-hover");
+        .addClass("table-hover")
+        .addClass("align-middle");
 }
 
 let checkDate = function(startDate, endDate, dueDate) {
