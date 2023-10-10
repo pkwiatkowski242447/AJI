@@ -1,0 +1,46 @@
+body {
+    background-color: #5ccbed;
+    margin: 0;
+}
+
+label {
+    display: block;
+    clear: both;
+}
+
+.from-input-label {
+    width: 30vh;
+    height: 15vh;
+    font-size: 15px;
+}
+
+.input-group-text {
+    width: 200px;
+}
+
+.info-fieldset {
+    margin: 5vh;
+    font-family: Open Sans, sans-serif;
+}
+
+.capital-header {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.lesser-header {
+    font-size: 23px;
+    font-weight: normal;
+}
+
+.submit-button {
+    font-family: Open Sans, sans-serif;
+    font-weight: bold;
+    width: 15%;
+    height: 10%;
+    margin: 0 auto;
+}
+
+.submit-button {
+    margin: 0 auto 0 auto;
+}

@@ -31,24 +31,37 @@ $.ajax({
 let initializeForm = function() {
     let dateSearch = $('#dateSearch');
 
+    let dateSearchFromDiv = $('<div>').addClass("input-group").addClass("mb-3");
+    let dateSearchToDiv = $('<div>').addClass("input-group").addClass("mb-3");
+
     let dateSearchFrom = $('<label>')
         .attr("id", "dateSearchFromId")
         .attr("for", "dateSearchFrom")
         .append("From")
-        .append(
-            $('<input type="date" id="dateSearchFrom">')
-        );
+        .addClass("date-range-element")
+        .addClass("input-group-text");
     let dateSearchTo = $('<label>')
         .attr("id", "dateSearchToId")
         .attr("for", "dateSearchTo")
         .append("To")
-        .append(
-            $('<input type="date" id="dateSearchTo">')
-        );
+        .addClass("date-range-element")
+        .addClass("input-group-text");
 
-    dateSearch.text("By date: ");
-    dateSearch.append(dateSearchFrom);
-    dateSearch.append(dateSearchTo);
+    dateSearchFromDiv.append(dateSearchFrom);
+    dateSearchFromDiv.append(
+        $('<input type="date" id="dateSearchFrom">')
+        .attr("class", "form-control")
+        .addClass("form-control")
+    );
+    dateSearchToDiv.append(dateSearchTo);
+    dateSearchToDiv.append(
+        $('<input type="date" id="dateSearchTo">')
+            .attr("class", "form-control")
+            .addClass("form-control")
+    );
+
+    dateSearch.append(dateSearchFromDiv);
+    dateSearch.append(dateSearchToDiv);
 }
 
 initializeForm();
