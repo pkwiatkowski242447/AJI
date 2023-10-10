@@ -19,7 +19,7 @@ body {
     height: 10vh;
     background-color: #fcfc19;
     border-radius: 50%;
-    box-shadow: 8px 8px rgba(0,0,0,0.2);
+    box-shadow: 1vh 1vh rgba(0,0,0,0.2);
 }
 
 .hedge {
@@ -206,7 +206,7 @@ body {
 }
 
 .tyre-outline {
-    border: 1.5px solid lightgrey;
+    border: 0.2vh solid lightgrey;
     width: 6vh;
     height: 6vh;
     border-radius: 50%;
@@ -330,7 +330,7 @@ body {
     height: 0.7vh;
     background-color: #583C7A;
     border-radius: 25%;
-    border: 1px solid black;
+    border: 0.2vh solid black;
 }
 
 .door-handle2 {
@@ -341,7 +341,7 @@ body {
     height: 0.7vh;
     background-color: #583C7A;
     border-radius: 25%;
-    border: 1px solid black;
+    border: 0.2vh solid black;
 }
 
 .side-stripe{
