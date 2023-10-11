@@ -11,22 +11,26 @@ const SECRET_KEY = "$2a$10$iZS9Dz8Wa.Yg8qoEOOTY.uhxkLhtQyG8fiHZnxWKooKyyIy6I/W0m
 
 // Function reading initial state of the array read from JSONbin bin. Basically, sending get request
 // for a resource described in the BASE_URL with SECRET_KEY (since the bin is private).
-$.ajax({
-    url: BASE_URL,
-    type: 'GET',
-    headers: {
-        'X-Master-Key': SECRET_KEY,
-        // Before adding this header this function didn't work. Basically it removes metadata from response.
-        'X-Bin-Meta': false
-    },
-    success: (data) => {
-        // console.log(data);
-        todoList = data;
-    },
-    error: (err) => {
-        console.log(err.response);
-    }
-});
+let loadDataFromJSONbin = function() {
+    $.ajax({
+        url: BASE_URL,
+        type: 'GET',
+        async: false,
+        headers: {
+            'X-Master-Key': SECRET_KEY,
+            // Before adding this header this function didn't work. Basically it removes metadata from response.
+            'X-Bin-Meta': false
+        },
+        success: (data) => {
+            // console.log(data);
+            todoList = data;
+            console.log("Data loaded!");
+        },
+        error: (err) => {
+            console.log(err.response);
+        }
+    });
+}
 
 let initializeForm = function() {
     let dateSearch = $('#dateSearch');
@@ -107,16 +111,22 @@ let deleteTodo = function(index) {
     // After element is removed - updateJSONbin function must be invoked - in order to change the state of the collection
     // of tasks in JSONbin bin.
     updateJSONbin();
+    // Updating state of the table in order for it to reflect deleted task.
+    updateTodoList();
 }
 
 // This function manages adding tasks to the list. It performs this action by reading values from the form - creating
 // appropriate object representing the task and adding it to the todoList.
 let addTodo = function() {
+    let newTitleElem = $('#inputTitle')[0];
+    let newDescriptionElem = $('#inputDescription')[0];
+    let newPlaceElem = $('#inputPlace')[0];
+    let newDateElem = $('#inputDate')[0];
     // Get the values from the form
-    let newTitle = $('#inputTitle')[0].value;
-    let newDescription = $('#inputDescription')[0].value;
-    let newPlace = $('#inputPlace')[0].value;
-    let newDate = new Date($('#inputDate')[0].value);
+    let newTitle = newTitleElem.value;
+    let newDescription = newDescriptionElem.value;
+    let newPlace = newPlaceElem.value;
+    let newDate = new Date(newDateElem.value);
     newDate = newDate.toISOString().split('T')[0];
     // Create new item - that is an object representing a task - using values read from the form.
     let newTodo = {
@@ -125,16 +135,23 @@ let addTodo = function() {
         place: newPlace,
         dueDate: newDate
     };
+    newTitleElem.value = String();
+    newDescriptionElem.value = String();
+    newPlaceElem.value = String();
+    newDateElem.value = String();
     // Add item to the list
     todoList.push(newTodo);
 
     // After new task is added to the todoList, updateJSON bin function must be invoked to change the state
     // of the JSONbin bin.
     updateJSONbin();
+    // Updating state of the list of tasks in order for it to reflect added task.
+    updateTodoList();
 }
 
 let updateTodoList = function() {
     // Putting reference to todoListView div into todoListDiv variable. Used later for editing list of shown tasks.
+    console.log("List update!");
     let todoListDiv = $('#todoListView');
 
     // Since this function is called every one second - then we remove any nodes that are children of todoListView div
@@ -249,10 +266,6 @@ let checkDate = function(startDate, endDate, dueDate) {
     return returnValue;
 }
 
-// Setting interval for updates of to-do list tasks (in milliseconds - so basically the list is updated
-// every one second).
-setInterval(updateTodoList, 1000);
-
 // This function manages updates to the bin on JSONbin.io. This time request type changes to PUT (in order to update
 // the resource on the server). Since todoList contains tasks in form of JSON objects - contentType is applicaton / json
 // and the content is everything read from todoList - converted to JSON string.
@@ -274,3 +287,8 @@ let updateJSONbin = function() {
         }
     });
 }
+
+// Downloading data from JSONbin.
+loadDataFromJSONbin();
+// Updating todoList of tasks in order to refresh it after loading data.
+updateTodoList();
