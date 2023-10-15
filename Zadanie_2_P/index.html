@@ -39,7 +39,7 @@
                 </fieldset>
             </div>
             <div class="col">
-                <form>
+                <form class="needs-validation" id="inputForm" novalidate>
                     <fieldset class="info-fieldset">
                         <legend class="capital-header">Adding new task</legend>
                         <fieldset>
@@ -47,10 +47,12 @@
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputTitle">Title</label>
                                 <input type="text" class="form-control" id="inputTitle" placeholder="Enter the tasks title..." required>
+                                <div class="invalid-feedback">This field is required</div>
                             </div>
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputDescription">Description</label>
                                 <input type="text" class="form-control" id="inputDescription" placeholder="Describe the task here..." required>
+                                <div class="invalid-feedback">This field is required</div>
                             </div>
                         </fieldset>
                         <fieldset>
@@ -58,16 +60,18 @@
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputPlace">Place</label>
                                 <input type="text" class="form-control" id="inputPlace" placeholder="Task's destination..." required>
+                                <div class="invalid-feedback">This field is required</div>
                             </div>
                             <div class="input-group mb-3">
                                 <label  class="input-group-text" for="inputDate">Due date</label>
                                 <input type="date" class="form-control" id="inputDate" required>
+                                <div class="invalid-feedback">This field is required</div>
                             </div>
                         </fieldset>
                     </fieldset>
                 </form>
                 <div class="text-center">
-                    <button type="submit" class="submit-button btn btn-info" onclick="addTodo()">Add</button>
+                    <button type="submit" class="submit-button btn btn-info" id="submitButton" onclick="addTodo()">Add</button>
                 </div>
             </div>
         </div>

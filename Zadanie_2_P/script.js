@@ -32,44 +32,6 @@ let loadDataFromJSONbin = function() {
     });
 }
 
-let initializeForm = function() {
-    let dateSearch = $('#dateSearch');
-
-    let dateSearchFromDiv = $('<div>').addClass("input-group").addClass("mb-3");
-    let dateSearchToDiv = $('<div>').addClass("input-group").addClass("mb-3");
-
-    let dateSearchFrom = $('<label>')
-        .attr("id", "dateSearchFromId")
-        .attr("for", "dateSearchFrom")
-        .append("From")
-        .addClass("date-range-element")
-        .addClass("input-group-text");
-    let dateSearchTo = $('<label>')
-        .attr("id", "dateSearchToId")
-        .attr("for", "dateSearchTo")
-        .append("To")
-        .addClass("date-range-element")
-        .addClass("input-group-text");
-
-    dateSearchFromDiv.append(dateSearchFrom);
-    dateSearchFromDiv.append(
-        $('<input type="date" id="dateSearchFrom">')
-        .attr("class", "form-control")
-        .addClass("form-control")
-    );
-    dateSearchToDiv.append(dateSearchTo);
-    dateSearchToDiv.append(
-        $('<input type="date" id="dateSearchTo">')
-            .attr("class", "form-control")
-            .addClass("form-control")
-    );
-
-    dateSearch.append(dateSearchFromDiv);
-    dateSearch.append(dateSearchToDiv);
-}
-
-initializeForm();
-
 // Call to the function initiating todoList with two sample to-do tasks.
 // initList();
 
@@ -265,6 +227,52 @@ let checkDate = function(startDate, endDate, dueDate) {
     } else returnValue = dueDate <= endDate && dueDate >= startDate;
     return returnValue;
 }
+
+let initializeForm = function() {
+    let dateSearch = $('#dateSearch');
+
+    let dateSearchFromDiv = $('<div>').addClass("input-group").addClass("mb-3");
+    let dateSearchToDiv = $('<div>').addClass("input-group").addClass("mb-3");
+
+    let dateSearchFrom = $('<label>')
+        .attr("id", "dateSearchFromId")
+        .attr("for", "dateSearchFrom")
+        .append("From")
+        .addClass("date-range-element")
+        .addClass("input-group-text");
+    let dateSearchTo = $('<label>')
+        .attr("id", "dateSearchToId")
+        .attr("for", "dateSearchTo")
+        .append("To")
+        .addClass("date-range-element")
+        .addClass("input-group-text");
+
+    let inputDateSearchFrom = $('<input type="date" id="dateSearchFrom">')
+        .attr("class", "form-control")
+        .addClass("form-control");
+
+    inputDateSearchFrom[0].addEventListener("input", updateTodoList);
+
+    let inputDateSearchTo = $('<input type="date" id="dateSearchTo">')
+        .attr("class", "form-control")
+        .addClass("form-control");
+
+    inputDateSearchTo[0].addEventListener("input", updateTodoList);
+
+    dateSearchFromDiv.append(dateSearchFrom);
+    dateSearchFromDiv.append(inputDateSearchFrom);
+
+    dateSearchToDiv.append(dateSearchTo);
+    dateSearchToDiv.append(inputDateSearchTo);
+
+    dateSearch.append(dateSearchFromDiv);
+    dateSearch.append(dateSearchToDiv);
+
+    let phraseSearch = $('#inputSearchByPhrase');
+    phraseSearch[0].addEventListener("input", updateTodoList);
+}
+
+initializeForm();
 
 // This function manages updates to the bin on JSONbin.io. This time request type changes to PUT (in order to update
 // the resource on the server). Since todoList contains tasks in form of JSON objects - contentType is applicaton / json
