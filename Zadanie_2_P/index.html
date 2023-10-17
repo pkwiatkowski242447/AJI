@@ -39,19 +39,19 @@
                 </fieldset>
             </div>
             <div class="col">
-                <form class="needs-validation" id="inputForm" novalidate>
+                <form id="input-form" class="needs-validation" novalidate>
                     <fieldset class="info-fieldset">
                         <legend class="capital-header">Adding new task</legend>
                         <fieldset>
                             <legend class="lesser-header">Overall information about the task</legend>
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputTitle">Title</label>
-                                <input type="text" class="form-control" id="inputTitle" placeholder="Enter the tasks title..." required>
+                                <input type="text" class="form-control" id="inputTitle" placeholder="Enter the tasks title..." value="" required>
                                 <div class="invalid-feedback">This field is required</div>
                             </div>
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputDescription">Description</label>
-                                <input type="text" class="form-control" id="inputDescription" placeholder="Describe the task here..." required>
+                                <input type="text" class="form-control" id="inputDescription" placeholder="Describe the task here..." value="" required>
                                 <div class="invalid-feedback">This field is required</div>
                             </div>
                         </fieldset>
@@ -59,7 +59,7 @@
                             <legend class="lesser-header">Task's details</legend>
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputPlace">Place</label>
-                                <input type="text" class="form-control" id="inputPlace" placeholder="Task's destination..." required>
+                                <input type="text" class="form-control" id="inputPlace" placeholder="Task's destination..." value="" required>
                                 <div class="invalid-feedback">This field is required</div>
                             </div>
                             <div class="input-group mb-3">
@@ -69,10 +69,10 @@
                             </div>
                         </fieldset>
                     </fieldset>
+                    <div class="text-center">
+                        <button type="submit" class="submit-button btn btn-info" id="submitButton">Add</button>
+                    </div>
                 </form>
-                <div class="text-center">
-                    <button type="submit" class="submit-button btn btn-info" id="submitButton" onclick="addTodo()">Add</button>
-                </div>
             </div>
         </div>
     </div>
