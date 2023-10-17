@@ -5,7 +5,11 @@
 }
 
 .input-group-text {
-    width: 200px;
+    min-width: 180px;
+}
+
+.form-control {
+    min-width: 180px;
 }
 
 .info-fieldset {
@@ -24,13 +28,6 @@
 }
 
 .submit-button {
-    font-family: Open Sans, sans-serif;
-    font-weight: bold;
     width: 15%;
     height: 10%;
-    margin: 0 auto;
-}
-
-.submit-button {
-    margin: 0 auto 0 auto;
 }
