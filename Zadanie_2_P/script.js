@@ -24,7 +24,6 @@ let loadDataFromJSONbin = function () {
         success: (data) => {
             // console.log(data)
             todoList = data
-            console.log("Data loaded!")
         },
         error: (err) => {
             console.log(err.response)
@@ -174,7 +173,7 @@ let updateJSONbin = function (asyncValue = true) {
         contentType: 'application/json',
         data: JSON.stringify(todoList),
         success: (data) => {
-            console.log(data)
+            // console.log(data)
         },
         error: (err) => {
             console.log(err.response)
@@ -279,6 +278,7 @@ let addTodo = function () {
 loadDataFromJSONbin()
 // Updating todoList of tasks in order to refresh it after loading data.
 updateTodoList();
+
 
 // Example starter JavaScript for disabling form submissions if there are invalid fields
 (() => {
