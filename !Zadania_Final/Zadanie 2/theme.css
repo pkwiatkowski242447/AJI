@@ -1,0 +1,33 @@
+.from-input-label {
+    width: 30vh;
+    height: 15vh;
+    font-size: 15px;
+}
+
+.input-group-text {
+    min-width: 180px;
+}
+
+.form-control {
+    min-width: 180px;
+}
+
+.info-fieldset {
+    margin: 5vh;
+    font-family: "Open Sans", sans-serif;
+}
+
+.capital-header {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.lesser-header {
+    font-size: 23px;
+    font-weight: normal;
+}
+
+.submit-button {
+    width: 15%;
+    height: 10%;
+}
