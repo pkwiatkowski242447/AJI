@@ -1,3 +1,7 @@
 # WebStorm excludes
 
 .idea
+
+# NPM excludes
+
+node_modules
