@@ -4,6 +4,8 @@ import { UserModel } from '../models/User';
 import { IUser } from '../interfaces/User';
 import { generalErrorFunction, validationErrorFunction } from '../errors/ErrorHandler';
 import { unlink } from 'node:fs';
+import { StatusCodes } from 'http-status-codes';
+import mongoose from 'mongoose';
 
 // Read methods
 
@@ -32,11 +34,15 @@ export const getAllUsers = async (request : express.Request, response : express.
                         }
                     }),
                 }
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: 'No documents for users were found in the database.',
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: 'No documents for users were found in the database.',
+                        });
             }   
         })
         .catch(error => {
@@ -52,11 +58,15 @@ export const getUserById = async (request : express.Request, response : express.
         .exec()
         .then(document => {
             if (document) {
-                return response.status(200).json(document);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(document);
             } else {
-                return response.status(404).json({
-                    message: `User object with id equal to ${userId} could not be found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `User object with id equal to ${userId} could not be found in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -72,11 +82,15 @@ export const getUserByEmail = async (request : express.Request, response : expre
         .exec()
         .then(document => {
             if (document) {
-                return response.status(200).json(document);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(document);
             } else {
-                return response.status(404).json({
-                    message: `User object with email equal to ${email} could not be found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `User object with email equal to ${email} could not be found in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -111,11 +125,15 @@ export const getUsersByUsername = async (request : express.Request, response : e
                         }
                     }),
                 }
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: `User object with username equal to ${username} could not be found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `User object with username equal to ${username} could not be found in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -132,11 +150,14 @@ export const getUserImageByUserId = (request : express.Request, response : expre
         .then(existingUser => {
             if (existingUser) {
                 const userImagePath = existingUser.userImage;
-                return response.status(200).sendFile(userImagePath);
+                return response
+                        .status(StatusCodes.OK)
+                        .sendFile(userImagePath);
             } else {
-                return response.status(404).json({
-                    message: `User with id equal to ${userId} could not be found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND).json({
+                            message: `User with id equal to ${userId} could not be found in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -174,15 +195,19 @@ export const updateUserById = async (request : express.Request, response : expre
                         url: 'http://localhost:8080/users/' + userId,
                     }
                 }
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: `There is no user object with id equal to ${userId} in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `There is no user object with id equal to ${userId} in the database.`,
+                        });
             }
         })
         .catch(error => {
-            if (error.name === 'ValidationErrors') {
+            if (error instanceof mongoose.Error.ValidationError) {
                 return validationErrorFunction(error, response);
             } else {
                 return generalErrorFunction(error, response);
@@ -212,18 +237,22 @@ export const updateUserImageByUserId = (request : express.Request, response : ex
                         }
                     });
                 }
-                return response.status(200).json({
-                    message: 'You user image has been updated successfully.',
-                    userImage: newImage,
-                });
+                return response
+                        .status(StatusCodes.OK)
+                        .json({
+                            message: 'You user image has been updated successfully.',
+                            userImage: newImage,
+                        });
             })
             .catch(error => {
                 return generalErrorFunction(error, response);
             });
     } else {
-        return response.status(400).json({
-            message: 'Your new user image was not sent along with request.',
-        });
+        return response
+                .status(StatusCodes.BAD_REQUEST)
+                .json({
+                    message: 'Your new user image was not sent along with request.',
+                });
     }
 };
 
@@ -255,11 +284,15 @@ export const deleteUserById = async (request : express.Request, response : expre
                         }
                     })
                 }
-                return response.status(200).json(customResponse); 
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse); 
             } else {
-                return response.status(404).json({
-                    message: `There is no user object with id equal to ${userId} in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `There is no user object with id equal to ${userId} in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -287,14 +320,18 @@ export const deleteUserImageByUserId = (request : express.Request, response : ex
                         console.log(error.message);
                     }
                 });
-                return response.status(200).json({
-                    message: 'You custom user image was deleted and replaced with default user image.',
-                    userImage: defaultImage,
-                });
+                return response
+                        .status(StatusCodes.OK)
+                        .json({
+                            message: 'You custom user image was deleted and replaced with default user image.',
+                            userImage: defaultImage,
+                        });
             } else {
-                return response.status(400).json({
-                    message: 'It is not possible to remove default user image.',
-                });
+                return response
+                        .status(StatusCodes.BAD_REQUEST)
+                        .json({
+                            message: 'It is not possible to remove default user image.',
+                        });
             }
         })
         .catch(error => {

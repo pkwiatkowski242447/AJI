@@ -3,6 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import { FileNotAnImageError } from '../errors/FileNotAnImageError';
 import { generalErrorFunction } from '../errors/ErrorHandler';
+import { StatusCodes } from 'http-status-codes';
 
 // Storages definitions
 
@@ -69,16 +70,20 @@ const imageMiddlewareFunction = (request : express.Request, response : express.R
         if (!error) {
             nextFunction();
         } else if (error instanceof FileNotAnImageError) {
-            return response.status(400).json({
-                message: error.message,
-                fileName: error.fileName,
-                givenMIMEType: error.givenMIMEType,
-                allowedMIMETypes: error.allowedMIMETypes,
-            });
+            return response
+                    .status(StatusCodes.BAD_REQUEST)
+                    .json({
+                        message: error.message,
+                        fileName: error.fileName,
+                        givenMIMEType: error.givenMIMEType,
+                        allowedMIMETypes: error.allowedMIMETypes,
+                    });
         } else if (error instanceof multer.MulterError) {
-            return response.status(500).json({
-                message: 'There was some issue when saving given file.',
-            });
+            return response
+                    .status(StatusCodes.INTERNAL_SERVER_ERROR)
+                    .json({
+                        message: 'There was some issue when saving given file.',
+                    });
         } else {
             return generalErrorFunction(error, response);
         }

@@ -1,5 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import { StatusCodes } from 'http-status-codes';
+
 import { CategoryModel } from '../models/Category';
 import { ICategory } from '../interfaces/Category';
 import { generalErrorFunction, validationErrorFunction } from '../errors/ErrorHandler';
@@ -25,10 +27,12 @@ export const createCategory = async (request : express.Request, response : expre
                     url: 'http://localhost:8080/categories/' + newCategory._id,
                 },
             }
-            return response.status(201).json(customResponse);
+            return response
+                    .status(StatusCodes.CREATED)
+                    .json(customResponse);
         })
         .catch(error => {
-            if (error.name === 'ValidationError') {
+            if (error instanceof mongoose.Error.ValidationError) {
                 return validationErrorFunction(error, response);
             } else {
                 return generalErrorFunction(error, response);
@@ -60,11 +64,15 @@ export const getAllCategories = async (request : express.Request, response : exp
                         }
                     }),
                 }
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: 'No documents for categories were found in the database.',
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: 'No documents for categories were found in the database.',
+                        });
             }
         })
         .catch(error => {
@@ -79,11 +87,15 @@ export const getCategoryById = async (request : express.Request, response : expr
         .exec()
         .then(document => {
             if (document) {
-                return response.status(200).json(document);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(document);
             } else {
-                return response.status(404).json({
-                    message: `Category object with id equal to ${categoryId} could not be found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `Category object with id equal to ${categoryId} could not be found in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -118,15 +130,19 @@ export const updateCategoryById = async (request : express.Request, response : e
                         url: 'http://localhost:8080/categories/' + categoryId,
                     }
                 }
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(400).json({
-                    message: `There is no category object with id equal to ${categoryId} in the database.`,
-                });
+                return response
+                        .status(StatusCodes.BAD_REQUEST)
+                        .json({
+                            message: `There is no category object with id equal to ${categoryId} in the database.`,
+                        });
             }
         })
         .catch(error => {
-            if (error.name === 'ValidationError') {
+            if (error instanceof mongoose.Error.ValidationError) {
                 return validationErrorFunction(error, response);
             } else {
                 return generalErrorFunction(error, response);
@@ -151,11 +167,15 @@ export const deleteCategoryById = async (request : express.Request, response : e
                         categoryName: document.categoryName,
                     }
                 };
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: `There is no category object with id equal to ${categoryId} in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `There is no category object with id equal to ${categoryId} in the database.`,
+                        });
             }
         })
         .catch(error => {

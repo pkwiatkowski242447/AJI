@@ -8,6 +8,7 @@ import { ICategory } from '../interfaces/Category';
 import { DataIncorrectError } from '../errors/DataIncorrectError';
 import { generalErrorFunction, validationErrorFunction } from '../errors/ErrorHandler';
 import { unlink } from 'node:fs';
+import { StatusCodes } from 'http-status-codes';
 
 // Create methods
 
@@ -18,10 +19,12 @@ export const createProduct = async (request : express.Request, response : expres
     try {
         await checkIfCategoriesExist(request);
     } catch (error) {
-        return response.status(400).json({
-            message: error.message,
-            reasons: error.reasons,
-        });
+        return response
+                .status(StatusCodes.BAD_REQUEST)
+                .json({
+                    message: error.message,
+                    reasons: error.reasons,
+                });
     }
 
     const newProduct = new ProductModel({
@@ -64,10 +67,12 @@ export const createProduct = async (request : express.Request, response : expres
                     }
                 }
             }
-            return response.status(201).json(customResponse);
+            return response
+                    .status(StatusCodes.CREATED)
+                    .json(customResponse);
         })
         .catch(error => {
-            if (error.name === 'ValidationError') {
+            if (error instanceof mongoose.Error.ValidationError) {
                 return validationErrorFunction(error, response);
             } else {
                 return generalErrorFunction(error, response);
@@ -112,11 +117,15 @@ export const getAllProducts = async (request : express.Request, response : expre
                         }
                     }),
                 };
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: 'No documents for products were found in the database.',
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: 'No documents for products were found in the database.',
+                        });
             }
         })
         .catch(error => {
@@ -133,7 +142,7 @@ export const getProductById = async (request : express.Request, response : expre
         .exec()
         .then(document => {
             if (document) {
-                return response.status(200).json({
+                return response.status(StatusCodes.OK).json({
                     ...document,
                     requests: {
                         image: {
@@ -144,9 +153,11 @@ export const getProductById = async (request : express.Request, response : expre
                     }
                 });
             } else {
-                return response.status(404).json({
-                    message: `Product object with id equal to ${productId} could not be found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `Product object with id equal to ${productId} could not be found in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -191,11 +202,15 @@ export const getProductsByCategoryId = async (request : express.Request, respons
                         }
                     }),
                 };
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: `No document for products with category which id equals ${categoryId} were found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `No document for products with category which id equals ${categoryId} were found in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -212,11 +227,15 @@ export const getProductImageByProductId = (request : express.Request, response :
         .then(existingProduct => {
             if (existingProduct) {
                 const productImagePath = existingProduct.productImage;
-                return response.status(200).sendFile(productImagePath);
+                return response
+                        .status(StatusCodes.OK)
+                        .sendFile(productImagePath);
             } else {
-                return response.status(404).json({
-                    message: `Product with id equal to ${productId} could not be found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `Product with id equal to ${productId} could not be found in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -231,10 +250,12 @@ export const updateProductById = async (request : express.Request, response : ex
     try {
         await checkIfCategoriesExist(request);
     } catch (error) {
-        return response.status(400).json({
-            message: error.message,
-            reasons: error.reasons,
-        });
+        return response
+                .status(StatusCodes.BAD_REQUEST)
+                .json({
+                    message: error.message,
+                    reasons: error.reasons,
+                });
     }
 
     const productId = request.params.productId;
@@ -266,15 +287,19 @@ export const updateProductById = async (request : express.Request, response : ex
                         url: 'http://localhost:8080/products/' + document._id,
                     }
                 };
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(400).json({
-                    message: `There is no product object with id equal to ${productId} in the database.`,
-                });
+                return response
+                        .status(StatusCodes.BAD_REQUEST)
+                        .json({
+                            message: `There is no product object with id equal to ${productId} in the database.`,
+                        });
             }
         })
         .catch(error => {
-            if (error.name === 'ValidationError') {
+            if (error instanceof mongoose.Error.ValidationError) {
                 return validationErrorFunction(error, response);
             } else {
                 return generalErrorFunction(error, response);
@@ -305,18 +330,22 @@ export const updateProductImageByProductId = (request : express.Request, respons
                         }
                     });
                 }
-                return response.status(200).json({
-                    message: 'Product image was updated successfully.',
-                    userImage: newImage,
-                });
+                return response
+                        .status(StatusCodes.OK)
+                        .json({
+                            message: 'Product image was updated successfully.',
+                            userImage: newImage,
+                        });
             })
             .catch(error => {
                 return generalErrorFunction(error, response);
             });
     } else {
-        return response.status(400).json({
-            message: 'Your new product image was not sent along with request.',
-        });
+        return response
+                .status(StatusCodes.BAD_REQUEST)
+                .json({
+                    message: 'Your new product image was not sent along with request.',
+                });
     }
 };
 
@@ -351,11 +380,15 @@ export const deleteProductById = async (request : express.Request, response : ex
                         }
                     })
                 }
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(400).json({
-                    message: `There is no product object with id equal to ${productId} in the database.`,
-                });
+                return response
+                        .status(StatusCodes.BAD_REQUEST)
+                        .json({
+                            message: `There is no product object with id equal to ${productId} in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -383,14 +416,18 @@ export const deleteProductImageByProductId = (request : express.Request, respons
                         console.log(error.message);
                     }
                 });
-                return response.status(200).json({
-                    message: 'Product image was deleted successfully.',
-                    userImage: defaultImage,
-                });
+                return response
+                        .status(StatusCodes.OK)
+                        .json({
+                            message: 'Product image was deleted successfully.',
+                            userImage: defaultImage,
+                        });
             } else {
-                return response.status(400).json({
-                    message: 'It is not possible to remove default product image.',
-                });
+                return response
+                        .status(StatusCodes.BAD_REQUEST)
+                        .json({
+                            message: 'It is not possible to remove default product image.',
+                        });
             }
         })
         .catch(error => {

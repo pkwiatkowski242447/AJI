@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { OrderStateModel } from '../models/OrderState';
 import { IOrderState } from '../interfaces/OrderState';
 import { generalErrorFunction, validationErrorFunction } from '../errors/ErrorHandler';
+import { StatusCodes } from 'http-status-codes';
 
 // Create methods
 
@@ -25,10 +26,12 @@ export const createOrderState = async (request : express.Request, response : exp
                     url: 'http://localhost:8080/status/' + newOrderState._id,
                 },
             }
-            return response.status(201).json(customResponse);
+            return response
+                    .status(StatusCodes.CREATED)
+                    .json(customResponse);
         })
         .catch(error => {
-            if (error.name === 'ValidationError') {
+            if (error instanceof mongoose.Error.ValidationError) {
                 return validationErrorFunction(error, response);
             } else {
                 return generalErrorFunction(error, response);
@@ -60,11 +63,15 @@ export const getAllOrderStates = async (request : express.Request, response : ex
                         }
                     }),
                 }
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: 'No documents for order states were found in the database.',
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: 'No documents for order states were found in the database.',
+                        });
             }
         })
         .catch(error => {
@@ -79,11 +86,15 @@ export const getOrderStateById = async (request : express.Request, response : ex
         .exec()
         .then(document => {
             if (document) {
-                return response.status(200).json(document);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(document);
             } else {
-                return response.status(404).json({
-                    message: `Order state object with id equal to ${statusId} could not be found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `Order state object with id equal to ${statusId} could not be found in the database.`,
+                        });
             }
         })
         .catch(error => {
@@ -106,11 +117,15 @@ export const deleteOrderStateById = async (request : express.Request, response :
                         state: document.state,
                     }
                 }
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(400).json({
-                    message: `There is no order state object with id equal to ${statusId} in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `There is no order state object with id equal to ${statusId} in the database.`,
+                        });
             }
         })
         .catch(error => {

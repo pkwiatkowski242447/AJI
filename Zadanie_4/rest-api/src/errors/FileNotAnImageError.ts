@@ -6,9 +6,11 @@ export class FileNotAnImageError extends Error {
     
     constructor(fileName : string, givenMIMEType : string) {
         super('Sent file is not an image.');
-        this.name = 'FileNotAnImageError';
+
+        this.name = this.constructor.name;
         this._fileName = fileName;
         this._givenMIMEType = givenMIMEType;
+        
         Error.captureStackTrace(this, this.constructor);
         Object.setPrototypeOf(this, FileNotAnImageError.prototype);
     }

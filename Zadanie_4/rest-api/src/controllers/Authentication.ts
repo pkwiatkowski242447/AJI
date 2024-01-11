@@ -1,12 +1,15 @@
-import express, { request } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import path from 'path';
+import { unlink } from 'node:fs';
+
 import { UserModel, UserRole } from '../models/User';
 import { IUser } from '../interfaces/User';
 import { generalErrorFunction, validationErrorFunction } from '../errors/ErrorHandler';
-import { unlink } from 'node:fs';
-import path from 'path';
+import { StatusCodes } from 'http-status-codes';
+import { authorizationErrorFunction, forbiddenErrorFunction } from '../errors/HTTPErrors';
 
 // Create methods
 
@@ -32,12 +35,14 @@ const createUser = async (request : express.Request, response : express.Response
             if (existingUser.length != 0) {
                 if (request.file && request.file.path !== path.resolve(__dirname, '../../uploads/users/default.png')) {
                     unlink(request.file.path, (error) => {
-                        console.log('Some error occured when file was being deleted.');
+                        console.log('Some error occured when file was being deleted: ' + error.message);
                     });
                 }
-                return response.status(409).json({
-                    message: `User with email equal to ${userData.email} is already in the database.`,
-                });
+                return response
+                        .status(StatusCodes.CONFLICT)
+                        .json({
+                            message: `User with email equal to ${userData.email} is already in the database.`,
+                        });
             } else {
                 bcrypt.hash(userData.password, 10, (error, passwordHash) => {
                     if (error) {
@@ -66,7 +71,6 @@ const createUser = async (request : express.Request, response : express.Response
                                         username: newUser.username,
                                         email: newUser.email,
                                         phoneNumber: newUser.phoneNumber,
-                                        userImage: newUser.userImage,
                                     },
                                     request: {
                                         description: 'HTTP request for getting details of created user account.',
@@ -74,12 +78,14 @@ const createUser = async (request : express.Request, response : express.Response
                                         url: 'http://localhost:8080/users/' + newUser._id,
                                     },
                                 }
-                                return response.status(201).json(customResponse);
+                                return response
+                                        .status(StatusCodes.CREATED)
+                                        .json(customResponse);
                             })
                             .catch(error => {
                                 if (newUser.userImage !== '../../uploads/users/default.png') {
                                     unlink(newUser.userImage, (error) => {
-                                        console.log('Some error occured when file was being deleted.');
+                                        console.log('Some error occured when file was being deleted: ' + error.message);
                                     });
                                 }
                                 if (error.name === 'ValidationError') {
@@ -126,19 +132,26 @@ export const loginUser = async (request : express.Request, response : express.Re
                             maxAge: 1000 * 60 * 45,
                         });
 
-                        response.setHeader('Authorization', `Bearer ${accessToken}`).status(200).json({
-                            message: 'Authentication succedded.',
-                        });
+                        response
+                            .status(StatusCodes.OK)
+                            .json({
+                                message: 'Authentication succedded.',
+                                accessToken: accessToken,
+                            });
                     } else {
-                        return response.status(401).json({
-                            message: 'Authentication failed since email or password is incorrect.',
-                        });
+                        return response
+                                .status(StatusCodes.UNAUTHORIZED)
+                                .json({
+                                    message: 'Authentication failed since email or password is incorrect.',
+                                });
                     }
                 });
             } else {
-                return response.status(401).json({
-                    message: 'Authentication failed since email or password is incorrect.',
-                });
+                return response
+                        .status(StatusCodes.UNAUTHORIZED)
+                        .json({
+                            message: 'Authentication failed since email or password is incorrect.',
+                        });
             }
         })
         .catch(error => {
@@ -170,14 +183,16 @@ export const useRefreshToken = (request : express.Request, response : express.Re
                 return forbiddenErrorFunction(response);
             } else {
                 const accessToken = generateAccessToken(user);
-                response.setHeader('Authorization', `Bearer ${accessToken}`);
-                return response.status(200).json({
-                    message: 'Access token has been refreshed.',
-                });
+                return response
+                        .status(StatusCodes.OK)
+                        .json({
+                            message: 'Access token has been refreshed.',
+                            accessToken: accessToken,
+                        });
             }
         });
     } else {
-        return authroizationErrorFunction(response);
+        return authorizationErrorFunction(response);
     }
 };
 
@@ -206,23 +221,13 @@ export const deleteRefreshToken = (request : express.Request, response : express
                 return generalErrorFunction(error, response);
             });
     } else {
-        return response.status(200).json({
-            message: 'Operation was successful.',
-        });
+        return response
+                .status(StatusCodes.OK)
+                .json({
+                    message: 'Operation was successful.',
+                });
     }
 };
-
-function authroizationErrorFunction(response : express.Response) {
-    return response.status(401).json({
-        message: 'Authorization failed.',
-    });
-}
-
-function forbiddenErrorFunction(response : express.Response) {
-    return response.status(403).json({
-        message: 'You are not authorized to perform this operation.',
-    })
-}
 
 function clearCookieAndSendResponse(response : express.Response) {
     response.clearCookie('jwtreftoken', { 
@@ -232,9 +237,11 @@ function clearCookieAndSendResponse(response : express.Response) {
         maxAge: 1000 * 60 * 45,
     });
 
-    return response.status(200).json({
-        message: 'Operation was successful.',
-    });
+    return response
+            .status(StatusCodes.OK)
+            .json({
+                message: 'Operation was successful.',
+            });
 }
 
 function generateAccessToken(user : IUser) : String {

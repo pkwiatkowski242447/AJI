@@ -2,7 +2,6 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { JWTToken } from '../types/JWTToken';
 import { authorizationErrorFunction, forbiddenErrorFunction } from '../errors/HTTPErrors';
-import { generalErrorFunction } from '../errors/ErrorHandler';
 
 export const authenticate = async (request : express.Request, response : express.Response, nextFunction : express.NextFunction) => {
     try {

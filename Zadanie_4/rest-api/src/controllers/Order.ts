@@ -1,15 +1,16 @@
-import express from "express";
-import mongoose from "mongoose";
-import { OrderModel } from "../models/Order";
-import { IOrder } from "interfaces/Order";
-import { OrderStateModel } from "../models/OrderState";
-import { IOrderState } from "../interfaces/OrderState";
-import { UserModel } from "../models/User";
-import { IUser } from "../interfaces/User";
-import { ProductModel } from "../models/Product";
-import { IProduct } from "../interfaces/Product";
-import { DataIncorrectError } from "../errors/DataIncorrectError";
-import { generalErrorFunction, validationErrorFunction } from "../errors/ErrorHandler";
+import express from 'express';
+import mongoose from 'mongoose';
+import { OrderModel } from '../models/Order';
+import { IOrder } from '../interfaces/Order';
+import { OrderStateModel } from '../models/OrderState';
+import { IOrderState } from '../interfaces/OrderState';
+import { UserModel } from '../models/User';
+import { IUser } from '../interfaces/User';
+import { ProductModel } from '../models/Product';
+import { IProduct } from '../interfaces/Product';
+import { DataIncorrectError } from '../errors/DataIncorrectError';
+import { generalErrorFunction, validationErrorFunction } from '../errors/ErrorHandler';
+import { StatusCodes } from 'http-status-codes';
 
 // Create methods
 
@@ -18,10 +19,12 @@ export const createOrder = async (request: express.Request, response: express.Re
     try {
         await checkIfDataExist(request);
     } catch (error) {
-        return response.status(400).json({
-            message: error.message,
-            reasons: error.reasons,
-        });
+        return response
+                .status(StatusCodes.BAD_REQUEST)
+                .json({
+                    message: error.message,
+                    reasons: error.reasons,
+                });
     }
 
     const session = await mongoose.startSession();
@@ -72,14 +75,16 @@ export const createOrder = async (request: express.Request, response: express.Re
                         url: "http://localhost:8080/orders/" + newOrder._id,
                     },
                 };
-                return response.status(201).json(customResponse);
+                return response
+                        .status(StatusCodes.CREATED)
+                        .json(customResponse);
             })
             .catch((error) => {
                 throw error;
             });
     })
     .catch((error) => {
-        if (error.name === 'ValidationError') {
+        if (error instanceof mongoose.Error.ValidationError) {
             return validationErrorFunction(error, response);
         } else {
             return generalErrorFunction(error, response);
@@ -121,11 +126,15 @@ export const getAllOrders = async (request: express.Request, response: express.R
                         };
                     }),
                 };
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: "No documents for orders were found in the database.",
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: "No documents for orders were found in the database.",
+                        });
             }
         })
         .catch((error) => {
@@ -168,11 +177,15 @@ export const getOrderById = async (request: express.Request, response: express.R
                         };
                     }),
                 };
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: `There is no order object with id equal to ${orderId} in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `There is no order object with id equal to ${orderId} in the database.`,
+                        });
             }
         })
         .catch((error) => {
@@ -212,11 +225,15 @@ export const getOrdersByStatusId = async (request: express.Request, response: ex
                         };
                     }),
                 };
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: `No documents for orders with order status id which equals ${statusId} were found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `No documents for orders with order status id which equals ${statusId} were found in the database.`,
+                        });
             }
         })
         .catch((error) => {
@@ -256,11 +273,15 @@ export const getOrdersByProductId = async (request: express.Request, response: e
                         };
                     }),
                 };
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: `No documents for orders with product id which equals ${productId} were found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `No documents for orders with product id which equals ${productId} were found in the database.`,
+                        });
             }
         })
         .catch((error) => {
@@ -300,11 +321,15 @@ export const getOrdersByUserId = (request: express.Request, response: express.Re
                         };
                     }),
                 };
-                return response.status(200).json(customResponse);
+                return response
+                        .status(StatusCodes.OK)
+                        .json(customResponse);
             } else {
-                return response.status(404).json({
-                    message: `No documents for orders with user id which equals ${userId} were found in the database.`,
-                });
+                return response
+                        .status(StatusCodes.NOT_FOUND)
+                        .json({
+                            message: `No documents for orders with user id which equals ${userId} were found in the database.`,
+                        });
             }
         })
         .catch((error) => {
@@ -318,10 +343,12 @@ export const updateOrderById = async (request: express.Request, response: expres
     try {
         await checkIfDataExist(request);
     } catch (error) {
-        return response.status(400).json({
-            message: error.message,
-            reasons: error.reasons,
-        });
+        return response
+            .status(StatusCodes.BAD_REQUEST)
+            .json({
+                message: error.message,
+                reasons: error.reasons,
+            });
     }
 
     const orderId = request.params.orderId;
@@ -393,11 +420,15 @@ export const updateOrderById = async (request: express.Request, response: expres
                             url: "http://localhost:8080/orders/" + document._id,
                         },
                     };
-                    return response.status(200).json(customResponse);
+                    return response
+                            .status(StatusCodes.OK)
+                            .json(customResponse);
                 } else {
-                    return response.status(400).json({
-                        message: `There is no order object with id equal to ${orderId} in the database.`,
-                    });
+                    return response
+                            .status(StatusCodes.BAD_REQUEST)
+                            .json({
+                                message: `There is no order object with id equal to ${orderId} in the database.`,
+                            });
                 }
             })
             .catch((error) => {
@@ -405,7 +436,7 @@ export const updateOrderById = async (request: express.Request, response: expres
             });
         })
         .catch(error => {
-            if (error.name === 'ValidationError') {
+            if (error instanceof mongoose.Error.ValidationError) {
                 return validationErrorFunction(error, response);
             } else {
                 return generalErrorFunction(error, response);
@@ -437,7 +468,7 @@ export const deleteOrderById = async (request: express.Request, response: expres
                         await ProductModel.updateOne({ _id: productId }, { $set: existingProduct }, { runValidators: true }).session(session);
                     })
                     .catch(error => {
-                        if (error.name === 'ValidationError') {
+                        if (error instanceof mongoose.Error.ValidationError) {
                             return validationErrorFunction(error, response);
                         } else {
                             return generalErrorFunction(error, response);
@@ -466,11 +497,15 @@ export const deleteOrderById = async (request: express.Request, response: expres
                             }),
                         },
                     };
-                    return response.status(200).json(customResponse);
+                    return response
+                            .status(StatusCodes.OK)
+                            .json(customResponse);
                 } else {
-                    return response.status(400).json({
-                        message: `There is no order object with id equal to ${orderId} in the database.`,
-                    });
+                    return response
+                            .status(StatusCodes.BAD_REQUEST)
+                            .json({
+                                message: `There is no order object with id equal to ${orderId} in the database.`,
+                            });
                 }
             })
             .catch((error) => {
