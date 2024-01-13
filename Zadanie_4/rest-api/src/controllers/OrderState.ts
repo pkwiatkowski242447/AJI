@@ -132,3 +132,58 @@ export const deleteOrderStateById = async (request : express.Request, response :
             return generalErrorFunction(error, response);
         });
 };
+
+export const initializeOrderStates = () => {
+    const CONFIRMED = new OrderStateModel({
+        _id: new mongoose.Types.ObjectId(),
+        state: 'CONFIRMED',
+    });
+
+    const UNCONFIRMED = new OrderStateModel({
+        _id: new mongoose.Types.ObjectId(),
+        state: 'UNCONFIRMED',
+    });
+
+    const CANCELLED = new OrderStateModel({
+        _id: new mongoose.Types.ObjectId(),
+        state: 'CANCELLED',
+    });
+
+    const DONE = new OrderStateModel({
+        _id: new mongoose.Types.ObjectId(),
+        state: 'DONE',
+    });
+
+    OrderStateModel.findOne<IOrderState>({ state: CONFIRMED.state })
+        .exec()
+        .then(orderState => {
+            if(!orderState) {
+                CONFIRMED.save();
+            }
+        });
+
+    OrderStateModel.findOne<IOrderState>({ state: UNCONFIRMED.state })
+        .exec()
+        .then(orderState => {
+            if(!orderState) {
+                UNCONFIRMED.save();
+            }
+        });
+
+    OrderStateModel.findOne<IOrderState>({ state: CANCELLED.state })
+        .exec()
+        .then(orderState => {
+            if(!orderState) {
+                CANCELLED.save();
+            }
+        });
+
+    OrderStateModel.findOne<IOrderState>({ state: DONE.state })
+        .exec()
+        .then(orderState => {
+            if(!orderState) {
+                DONE.save();
+            }
+        })
+        .catch();
+} 

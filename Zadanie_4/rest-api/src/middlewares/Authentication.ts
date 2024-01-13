@@ -14,17 +14,12 @@ export const authenticate = async (request : express.Request, response : express
                 if (error) {
                     return forbiddenErrorFunction(response);
                 } else {
-                    if (request.is('multipart/form-data')) {
-                        const userDataString = JSON.stringify({
-                            user: decoded.userInformation,
-                            role: decoded.role,
-                        });
+                    const userDataString = JSON.stringify({
+                        user: decoded.userInformation,
+                        role: decoded.role,
+                    });
 
-                        (request as any).userData = userDataString;
-                    } else {
-                        request.body.user = decoded.userInformation;
-                        request.body.role = decoded.role;
-                    }
+                    (request as any).userData = userDataString;
                     nextFunction();
                 }
             });

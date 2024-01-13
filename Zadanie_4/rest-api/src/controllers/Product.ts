@@ -6,7 +6,7 @@ import { IProduct } from '../interfaces/Product';
 import { CategoryModel } from '../models/Category';
 import { ICategory } from '../interfaces/Category';
 import { DataIncorrectError } from '../errors/DataIncorrectError';
-import { generalErrorFunction, validationErrorFunction } from '../errors/ErrorHandler';
+import { generalErrorFunction, invalidObjectIdentifier, validationErrorFunction } from '../errors/ErrorHandler';
 import { unlink } from 'node:fs';
 import { StatusCodes } from 'http-status-codes';
 
@@ -17,7 +17,7 @@ export const createProduct = async (request : express.Request, response : expres
     const productData = JSON.parse(request.body.productData);
 
     try {
-        await checkIfCategoriesExist(request);
+        await checkIfCategoriesExist(productData);
     } catch (error) {
         return response
                 .status(StatusCodes.BAD_REQUEST)
@@ -161,7 +161,11 @@ export const getProductById = async (request : express.Request, response : expre
             }
         })
         .catch(error => {
-            return generalErrorFunction(error, response);
+            if (error instanceof mongoose.Error.CastError) {
+                return invalidObjectIdentifier(error, response);
+            } else {
+                return generalErrorFunction(error, response);
+            }
         });
 };
 
@@ -214,7 +218,11 @@ export const getProductsByCategoryId = async (request : express.Request, respons
             }
         })
         .catch(error => {
-            return generalErrorFunction(error, response);
+            if (error instanceof mongoose.Error.CastError) {
+                return invalidObjectIdentifier(error, response);
+            } else {
+                return generalErrorFunction(error, response);
+            }
         });
 };
 
@@ -239,7 +247,11 @@ export const getProductImageByProductId = (request : express.Request, response :
             }
         })
         .catch(error => {
-            return generalErrorFunction(error, response);
+            if (error instanceof mongoose.Error.CastError) {
+                return invalidObjectIdentifier(error, response);
+            } else {
+                return generalErrorFunction(error, response);
+            }
         });
 };
 
@@ -248,7 +260,7 @@ export const getProductImageByProductId = (request : express.Request, response :
 export const updateProductById = async (request : express.Request, response : express.Response) => {
 
     try {
-        await checkIfCategoriesExist(request);
+        await checkIfCategoriesExist(request.body);
     } catch (error) {
         return response
                 .status(StatusCodes.BAD_REQUEST)
@@ -259,19 +271,30 @@ export const updateProductById = async (request : express.Request, response : ex
     }
 
     const productId = request.params.productId;
+    const nonExistentKeys : Array<Object> = [];
     const updateOpts : any = {};
+
+    console.log(request.body);
 
     Object.keys(request.body).forEach(key => {
         if (!(key in ProductSchema.obj)) {
-            return response
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
-                        message: `Key ${key} is not defined in product document schema.`,
-                    });
+            nonExistentKeys.push({
+                message: 'Property in update request body is incorrect',
+                cause: `Key ${key} is not defined in product document schema.`,
+            });
         } else {
             updateOpts[key] = request.body[key];
         }
     });
+
+    if (nonExistentKeys.length != 0) {
+        return response
+                .status(StatusCodes.BAD_REQUEST)
+                .json({
+                    message: 'Cannot update object with non existent properties.',
+                    reasons: nonExistentKeys,
+                });
+    }
 
     ProductModel.findOneAndUpdate<IProduct>({ _id: productId }, { $set: updateOpts }, { runValidators: true })
         .select(' _id productName productDescription productPrice productWeight arrayOfCategories productCount ')
@@ -309,6 +332,8 @@ export const updateProductById = async (request : express.Request, response : ex
         .catch(error => {
             if (error instanceof mongoose.Error.ValidationError) {
                 return validationErrorFunction(error, response);
+            } else if (error instanceof mongoose.Error.CastError) {
+                return invalidObjectIdentifier(error, response);
             } else {
                 return generalErrorFunction(error, response);
             }
@@ -346,7 +371,11 @@ export const updateProductImageByProductId = (request : express.Request, respons
                         });
             })
             .catch(error => {
-                return generalErrorFunction(error, response);
+                if (error instanceof mongoose.Error.CastError) {
+                    return invalidObjectIdentifier(error, response);
+                } else {
+                    return generalErrorFunction(error, response);
+                }
             });
     } else {
         return response
@@ -400,7 +429,11 @@ export const deleteProductById = async (request : express.Request, response : ex
             }
         })
         .catch(error => {
-            return generalErrorFunction(error, response);
+            if (error instanceof mongoose.Error.CastError) {
+                return invalidObjectIdentifier(error, response);
+            } else {
+                return generalErrorFunction(error, response);
+            }
         });
 };
 
@@ -439,26 +472,46 @@ export const deleteProductImageByProductId = (request : express.Request, respons
             }
         })
         .catch(error => {
-            return generalErrorFunction(error, response);
+            if (error instanceof mongoose.Error.CastError) {
+                return invalidObjectIdentifier(error, response);
+            } else {
+                return generalErrorFunction(error, response);
+            }
         });
 };
 
-async function checkIfCategoriesExist(request : express.Request) {
-    const categoryErrors : Array<String> = [];
+async function checkIfCategoriesExist(productData : IProduct) {
+    const categoryErrors : Array<Object> = [];
 
-    if (request.body.arrayOfCategories) {
-        for (let i = 0; i < request.body.arrayOfCategories.length; i++) {
-            const categoryId = request.body.arrayOfCategories[i]; 
-            const existingCategory = await CategoryModel.findById<ICategory>(categoryId);
-            if (!existingCategory) {
-                categoryErrors.push(`Category with id equal to ${categoryId} could not be found in the database.`);
-            };
+    if (productData.arrayOfCategories) {
+        for (let i = 0; i < productData.arrayOfCategories.length; i++) {
+            const categoryId = productData.arrayOfCategories[i]; 
+            await CategoryModel.findById<ICategory>(categoryId)
+                .exec()
+                .then(existingCategory => {
+                    if (!existingCategory) {
+                        categoryErrors.push({
+                            message: 'Given category id is invalid.',
+                            categoryId: categoryId,
+                            reason: `Category with id equal to ${categoryId} could not be found in the database.`
+                        });
+                    }
+                })
+                .catch(error => {
+                    if (error instanceof mongoose.Error.CastError) {
+                        categoryErrors.push({
+                            message: 'Given category id is invalid.',
+                            categoryId: categoryId,
+                            reason: `Id ${error.value} is not a valid category id.`
+                        });
+                    }
+                });
         }
     
+        console.log(categoryErrors);
+
         if (categoryErrors.length != 0) {
-            throw new DataIncorrectError({
-                category: categoryErrors
-            });
+            throw new DataIncorrectError(categoryErrors);
         };
     }
 }

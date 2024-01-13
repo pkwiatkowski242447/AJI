@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import { UserModel } from '../models/User';
+import { UserModel, UserRole } from '../models/User';
 import { IUser } from '../interfaces/User';
 import { generalErrorFunction, validationErrorFunction } from '../errors/ErrorHandler';
 import { unlink } from 'node:fs';
@@ -258,10 +258,22 @@ export const updateUserImageByUserId = (request : express.Request, response : ex
 
 // Delete methods
 
-export const deleteUserById = async (request : express.Request, response : express.Response) => {
+export const deleteClientById = (request : express.Request, response : express.Response) => {
+    deleteUserById(request, response, UserRole.CLIENT);
+};
+
+export const deleteStaffById = (request : express.Request, response : express.Response) => {
+    deleteUserById(request, response, UserRole.STAFF);
+};
+
+export const deleteAdminById = (request : express.Request, response : express.Response) => {
+    deleteUserById(request, response, UserRole.ADMIN);
+};
+
+export const deleteUserById = async (request : express.Request, response : express.Response, userRole: String) => {
     const userId = request.params.userId;
 
-    UserModel.findOneAndDelete<IUser>({ _id: userId })
+    UserModel.findOneAndDelete<IUser>({ _id: userId, role: userRole })
         .select(' _id username email phoneNumber userImage ')
         .exec()
         .then(document => {

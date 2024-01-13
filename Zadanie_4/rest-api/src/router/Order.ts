@@ -1,5 +1,5 @@
 import express from 'express';
-import { createOrder, getAllOrders, getOrderById, getOrdersByStatusId, getOrdersByProductId, getOrdersByUserId, updateOrderById, deleteOrderById } from '../controllers/Order';
+import { createOrder, getAllOrders, getOrderById, getOrdersByStatusId, getOrdersByProductId, getOrdersByUserId, updateOrderById, deleteOrderById, updateOrderStateById } from '../controllers/Order';
 import { authenticate } from '../middlewares/Authentication';
 import { checkRolesPermission } from '../middlewares/VerifyRole';
 import { UserRole } from '../models/User';
@@ -13,5 +13,6 @@ export default(router : express.Router) => {
     router.get('/orders/product/:productId', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), getOrdersByProductId);
     router.post('/orders', authenticate, checkRolesPermission(new Array(UserRole.CLIENT)), createOrder);
     router.put('/orders/:orderId', authenticate, checkOrderOwnerShipPermissions(new Array(UserRole.STAFF)), updateOrderById);
+    router.put('/orders/:orderId/status', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), updateOrderStateById);
     router.delete('/orders/:orderId', authenticate, checkOrderOwnerShipPermissions(new Array(UserRole.STAFF)), deleteOrderById);
 }

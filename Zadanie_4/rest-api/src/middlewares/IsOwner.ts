@@ -1,10 +1,9 @@
 import express from 'express';
-import { isStaff, isAdmin, checkRolesPermission } from './VerifyRole';
 import { forbiddenErrorFunction } from '../errors/HTTPErrors';
 import { OrderModel } from '../models/Order';
 import { IOrder } from '../interfaces/Order';
-import { generalErrorFunction } from '../errors/ErrorHandler';
 import { isCorrectUserType } from './VerifyRole';
+import { UserData } from 'types/UserData';
 
 // Methods for permission checking - if conditions are ok then go to the next middleware.
 
@@ -29,37 +28,24 @@ export const checkOrderOwnerShipPermissions = (userRoles : Array<string>) => {
 };
 
 export const isOwnerOfTheAccount = (request : express.Request, response : express.Response) => {
-    if (request.is('multipart/form-data')) {
-        if ((request as any)?.userData) {
-            const userData = JSON.parse((request as any).userData);
-            const userId = userData.user._id;
-            const requestUserId = request.params.userId;
-            if (userId == requestUserId) {
-                return true;
-            } else {
-                return false;
-            }
+    const userData : UserData = JSON.parse((request as any).userData);
+    if (userData) {
+        const userId = userData.user._id;
+        const requestUserId = request.params.userId;
+        if (userId.toString() == requestUserId) {
+            return true;
         } else {
             return false;
         }
     } else {
-        if (request?.body.user._id) {
-            const userId = request.body.user._id;
-            const requestUserId = request.params.userId;
-            if (userId === requestUserId) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+        return false;
     }
 };
 
 export const isOwnerOfTheOrder = (request : express.Request, response : express.Response) => {
-    if (request?.body.user._id) {
-        const userId = request.body.user._id;
+    const userData : UserData = JSON.parse((request as any).userData);
+    if (userData) {
+        const userId = userData.user._id;
         const requestOrderId = request.params.orderId;
             
         OrderModel.findById<IOrder>(requestOrderId)

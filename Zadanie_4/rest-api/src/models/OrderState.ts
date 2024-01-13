@@ -9,7 +9,7 @@ export const OrderStateSchema = new mongoose.Schema<IOrderState>({
     state: { 
         type: String, 
         require: true,
-        minlength: [5, 'Order state name must be at least 5 characters long.'],
+        minlength: [4, 'Order state name must be at least 4 characters long.'],
         maxlength:[20, 'Order state name could not be longer than 20 characters.'],
         validate: /[A-Za-z ]/
     }

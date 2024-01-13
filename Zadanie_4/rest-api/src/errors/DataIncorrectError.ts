@@ -1,8 +1,8 @@
 export class DataIncorrectError extends Error {
 
-    private _reasons : Object;
+    private _reasons : Array<Object>;
 
-    constructor(object : Object) {
+    constructor(object : Array<Object>) {
         super('Given data is incorrect.');
         
         this.name = this.constructor.name;
@@ -12,11 +12,11 @@ export class DataIncorrectError extends Error {
         Object.setPrototypeOf(this, DataIncorrectError.prototype);
     }
 
-    get reasons() : Object {
+    get reasons() : Array<Object> {
         return this._reasons;
     }
 
-    set reasons(reasons : Object) {
+    set reasons(reasons : Array<Object>) {
         this._reasons = reasons;
     }
 }

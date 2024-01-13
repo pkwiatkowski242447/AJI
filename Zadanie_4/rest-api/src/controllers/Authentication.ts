@@ -255,7 +255,7 @@ function generateAccessToken(user : IUser) : String {
         role: user.role,
     }, 
     process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: '15m',
+        expiresIn: '24h',
     });
 
     return accessToken;

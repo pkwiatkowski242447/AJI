@@ -11,6 +11,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import { StatusCodes } from 'http-status-codes';
 import { readFileSync } from 'node:fs';
+import { initializeOrderStates } from './controllers/OrderState';
 
 dotenv.config({
     path: path.resolve(__dirname, '../.env')
@@ -27,6 +28,7 @@ mongoose.connect(process.env.MONGO_URL, {
     authSource: 'admin',
 });
 mongoose.connection.on('error', (error : Error) => console.log(error));
+mongoose.connection.once('open', initializeOrderStates);
 
 const app : Application = express();
 const port : number = parseInt(process.env.PORT) || 8080;

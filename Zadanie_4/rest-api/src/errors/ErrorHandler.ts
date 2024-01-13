@@ -20,3 +20,13 @@ export const generalErrorFunction = (error: Error, response: express.Response) =
                 cause: error.message,
             });
 }
+
+export const invalidObjectIdentifier = (error : mongoose.Error.CastError, response : express.Response) => {
+    return response
+            .status(StatusCodes.BAD_REQUEST)
+            .json({
+                message: `Given id: ${error.value} cannot be an object identifier.`,
+                type: error.name,
+                cause: error.message,
+            });
+}

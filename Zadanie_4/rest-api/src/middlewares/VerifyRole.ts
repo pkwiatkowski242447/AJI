@@ -1,6 +1,7 @@
 import express, { request } from 'express';
 import { UserRole } from '../models/User';
 import { forbiddenErrorFunction } from '../errors/HTTPErrors';
+import { UserData } from 'types/UserData';
 
 // Methods for permission checking - if conditions are ok then go to the next middleware.
 
@@ -31,20 +32,12 @@ export const isAdmin = (request : express.Request, response : express.Response, 
 // Method for checking if user is of correct userType, as opposed to user types passed in userRoles arrray.
 
 export const isCorrectUserType = (request : express.Request, response : express.Response, userRoles : Array<String>) => {
-    let requestRole : string;
-    if (request.is('multipart/form-data')) {
-        if ((request as any)?.userData) {
-            const userData = JSON.parse((request as any).userData);
-            requestRole = userData.role;
-        } else {
-            return false;
-        }
+    let requestRole;
+    const userData : UserData = JSON.parse((request as any).userData);
+    if (userData) {
+        requestRole = userData.role;
     } else {
-        if (request?.body) {
-            requestRole = request.body.role;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     if (userRoles.includes(requestRole)) {
