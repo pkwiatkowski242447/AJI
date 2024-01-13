@@ -12,6 +12,6 @@ export const ItemSchema = new mongoose.Schema<IItem>({
         required: true,
         min: [1, 'It is not possible to order less than one product.'],
     },
-});
+}, { strict: true });
 
 export const ItemModel = mongoose.model('Item', ItemSchema);

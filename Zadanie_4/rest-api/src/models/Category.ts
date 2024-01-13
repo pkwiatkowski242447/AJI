@@ -13,7 +13,7 @@ export const CategorySchema = new mongoose.Schema<ICategory>({
         minlength: [3, 'Category name must be at least 3 characters long.'],
         maxlength: [20, 'Category name could not be longer than 20 characters.'],
     }
-});
+}, { strict: true });
 
 // Generatring model from Schema 
 export const CategoryModel = mongoose.model<ICategory>('Category', CategorySchema);

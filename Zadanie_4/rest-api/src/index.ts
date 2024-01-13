@@ -9,10 +9,13 @@ import dotenv from 'dotenv';
 import path from 'path';
 import morgan from 'morgan';
 import helmet from 'helmet';
+import { StatusCodes } from 'http-status-codes';
 
 dotenv.config({
     path: path.resolve(__dirname, '../.env')
 });
+
+// Connection with MongoDB database with Mongoose ODM.
 
 mongoose.Promise = Promise;
 mongoose.connect(process.env.MONGO_URL, {
@@ -28,6 +31,7 @@ const app : Application = express();
 const port : number = parseInt(process.env.PORT) || 8080;
 
 // Added logging for every API call.
+
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,10 +41,22 @@ app.use(cors({
     credentials: true
 }));
 
+// Use for defined paths for REST resources
+
 app.use('/', router());
 
-const server = http.createServer(app);
+// Use for all non-existent paths
 
-server.listen(port, () => {
+app.use((request : express.Request, response : express.Response) => {
+    return response
+            .status(StatusCodes.NOT_FOUND)
+            .json({
+                message: 'Requested URL could not be found.'
+            });
+});
+
+const httpServer = http.createServer(app);
+
+httpServer.listen(port, () => {
     console.log(`HTTP server is running at http://localhost:${port}/`);
 });

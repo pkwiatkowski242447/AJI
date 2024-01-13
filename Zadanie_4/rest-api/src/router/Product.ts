@@ -11,8 +11,8 @@ export default(router : express.Router) => {
     router.get('/products/:productId/image', getProductImageByProductId);
     router.get('/products/:categoryId', authenticate, checkRolesPermission(new Array(UserRole.CLIENT, UserRole.STAFF)), getProductsByCategoryId);
     router.post('/products', authenticate, productImageMiddleware, checkRolesPermission(new Array(UserRole.STAFF)), createProduct);
-    router.patch('/products/:productId', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), updateProductById);
-    router.patch('/products/:productId/image', authenticate, productImageMiddleware, checkRolesPermission(new Array(UserRole.STAFF)), updateProductImageByProductId);
+    router.put('/products/:productId', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), updateProductById);
+    router.put('/products/:productId/image', authenticate, productImageMiddleware, checkRolesPermission(new Array(UserRole.STAFF)), updateProductImageByProductId);
     router.delete('/products/:productId', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), deleteProductById);
     router.delete('/products/:productId/image', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), deleteProductImageByProductId);
 }

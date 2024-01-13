@@ -58,7 +58,7 @@ export const UserSchema : mongoose.Schema = new mongoose.Schema<IUser>({
         default: path.resolve(__dirname, '../../uploads/users/default.png'),
         select: true,
     }
-});
+}, { strict: true });
 
 // Definition of object containing all users roles.
 

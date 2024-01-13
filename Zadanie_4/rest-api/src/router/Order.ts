@@ -12,6 +12,6 @@ export default(router : express.Router) => {
     router.get('/orders/user/:userId', authenticate, checkOrderOwnerShipPermissions(new Array(UserRole.STAFF)), getOrdersByUserId);
     router.get('/orders/product/:productId', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), getOrdersByProductId);
     router.post('/orders', authenticate, checkRolesPermission(new Array(UserRole.CLIENT)), createOrder);
-    router.patch('/orders/:orderId', authenticate, checkOrderOwnerShipPermissions(new Array(UserRole.STAFF)), updateOrderById);
+    router.put('/orders/:orderId', authenticate, checkOrderOwnerShipPermissions(new Array(UserRole.STAFF)), updateOrderById);
     router.delete('/orders/:orderId', authenticate, checkOrderOwnerShipPermissions(new Array(UserRole.STAFF)), deleteOrderById);
 }

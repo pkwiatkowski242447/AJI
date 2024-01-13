@@ -13,7 +13,7 @@ export const OrderStateSchema = new mongoose.Schema<IOrderState>({
         maxlength:[20, 'Order state name could not be longer than 20 characters.'],
         validate: /[A-Za-z ]/
     }
-});
+}, { strict: true });
 
 // Generating model from Schema
 export const OrderStateModel = mongoose.model<IOrderState>('OrderState', OrderStateSchema);

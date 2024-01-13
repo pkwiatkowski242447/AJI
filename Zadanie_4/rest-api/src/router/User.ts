@@ -12,8 +12,8 @@ export default(router : express.Router) => {
     router.get('/users/:userId/image', authenticate, checkAccountOwnerShipPermissions(new Array(UserRole.STAFF, UserRole.ADMIN)), getUserImageByUserId);
     router.get('/users/username/:username', authenticate, checkRolesPermission(new Array(UserRole.STAFF, UserRole.ADMIN)), getUsersByUsername);
     router.get('/users/email/:email', authenticate, checkRolesPermission(new Array(UserRole.STAFF, UserRole.ADMIN)), getUserByEmail);
-    router.patch('/users/:userId', authenticate, checkAccountOwnerShipPermissions(new Array()), updateUserById);
-    router.patch('/users/:userId/image', authenticate, userImageMiddleware, checkAccountOwnerShipPermissions(new Array()), updateUserImageByUserId);                  
+    router.put('/users/:userId', authenticate, checkAccountOwnerShipPermissions(new Array()), updateUserById);
+    router.put('/users/:userId/image', authenticate, userImageMiddleware, checkAccountOwnerShipPermissions(new Array()), updateUserImageByUserId);                  
     router.delete('/users/clients/:userId', authenticate, checkAccountOwnerShipPermissions(new Array(UserRole.STAFF)), deleteUserById);
     router.delete('/users/staff/:userId', authenticate, checkAccountOwnerShipPermissions(new Array(UserRole.ADMIN)), deleteUserById);
     router.delete('/users/admins/:userId', authenticate, checkAccountOwnerShipPermissions(new Array(UserRole.ADMIN)), deleteUserById);

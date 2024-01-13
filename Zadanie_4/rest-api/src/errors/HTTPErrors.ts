@@ -1,5 +1,5 @@
 import express from 'express';
-import { StatusCodes, ReasonPhrases } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 export const authorizationErrorFunction = (response : express.Response) => {
     return response
@@ -13,6 +13,6 @@ export const forbiddenErrorFunction = (response : express.Response) => {
     return response
             .status(StatusCodes.FORBIDDEN)
             .json({
-                message: 'You are not authorized to perform this operation.',
+                message: 'You are forbidden from performing this operation.',
             });
 }

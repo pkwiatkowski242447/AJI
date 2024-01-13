@@ -168,29 +168,30 @@ export const useRefreshToken = (request : express.Request, response : express.Re
         const refreshToken = cookies.jwtreftoken;
 
         UserModel.findOne<IUser>({ 'authentication.refreshToken': refreshToken })
+            .select(' _id username email role')
             .exec()
             .then(existingUser => {
                 if (!existingUser) {
                     return forbiddenErrorFunction(response);
+                } else {
+                    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error : Error) => {
+                        if (error) {
+                            return forbiddenErrorFunction(response);
+                        } else {
+                            const accessToken = generateAccessToken(existingUser);
+                            return response
+                                    .status(StatusCodes.OK)
+                                    .json({
+                                        message: 'Access token has been refreshed.',
+                                        accessToken: accessToken,
+                                    });
+                        }
+                    });
                 }
             })
             .catch(error => {
                 return generalErrorFunction(error, response);
             });
-
-        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error : Error, user : IUser) => {
-            if (error) {
-                return forbiddenErrorFunction(response);
-            } else {
-                const accessToken = generateAccessToken(user);
-                return response
-                        .status(StatusCodes.OK)
-                        .json({
-                            message: 'Access token has been refreshed.',
-                            accessToken: accessToken,
-                        });
-            }
-        });
     } else {
         return authorizationErrorFunction(response);
     }

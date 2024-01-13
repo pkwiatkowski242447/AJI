@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { CategoryModel } from '../models/Category';
 import { ICategory } from '../interfaces/Category';
 import { generalErrorFunction, validationErrorFunction } from '../errors/ErrorHandler';
+import jsonpatch from 'jsonpatch';
 
 // Create methods
 

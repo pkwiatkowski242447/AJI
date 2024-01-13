@@ -9,5 +9,5 @@ export default(router : express.Router) => {
     router.get('/categories/:categoryId', getCategoryById);
     router.post('/categories', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), createCategory);
     router.delete('/categories/:categoryId', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), deleteCategoryById);
-    router.patch('/categories/:categoryId', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), updateCategoryById);
+    router.put('/categories/:categoryId', authenticate, checkRolesPermission(new Array(UserRole.STAFF)), updateCategoryById);
 }

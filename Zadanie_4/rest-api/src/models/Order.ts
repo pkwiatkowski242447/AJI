@@ -35,7 +35,7 @@ export const OrderSchema = new mongoose.Schema<IOrder>({
             message: 'Each order must contain at least one product in any quantity.',
         }
     }
-});
+}, { strict: true });
 
 // Generating model from Schema
 export const OrderModel = mongoose.model<IOrder>('Order', OrderSchema);

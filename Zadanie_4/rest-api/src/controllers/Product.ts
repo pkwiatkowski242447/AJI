@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import path from 'path';
-import { ProductModel } from '../models/Product';
+import { ProductModel, ProductSchema } from '../models/Product';
 import { IProduct } from '../interfaces/Product';
 import { CategoryModel } from '../models/Category';
 import { ICategory } from '../interfaces/Category';
@@ -262,7 +262,15 @@ export const updateProductById = async (request : express.Request, response : ex
     const updateOpts : any = {};
 
     Object.keys(request.body).forEach(key => {
-        updateOpts[key] = request.body[key];
+        if (!(key in ProductSchema.obj)) {
+            return response
+                    .status(StatusCodes.BAD_REQUEST)
+                    .json({
+                        message: `Key ${key} is not defined in product document schema.`,
+                    });
+        } else {
+            updateOpts[key] = request.body[key];
+        }
     });
 
     ProductModel.findOneAndUpdate<IProduct>({ _id: productId }, { $set: updateOpts }, { runValidators: true })
