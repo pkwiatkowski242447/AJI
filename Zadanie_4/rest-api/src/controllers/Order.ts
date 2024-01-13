@@ -12,8 +12,6 @@ import { IProduct } from '../interfaces/Product';
 import { DataIncorrectError } from '../errors/DataIncorrectError';
 import { generalErrorFunction, invalidObjectIdentifier, validationErrorFunction } from '../errors/ErrorHandler';
 import { StatusCodes } from 'http-status-codes';
-import jsonpatch from 'jsonpatch';
-import { IItem } from 'interfaces/Item';
 import { ProductInputDTO } from 'types/ProductInputDTO';
 
 // Create methods
@@ -34,23 +32,29 @@ export const createOrder = async (request: express.Request, response: express.Re
     const session = await mongoose.startSession();
 
     await session.withTransaction(async () => {
-        if (request.body.products) {
-            for (let i = 0; i < request.body.products.length; i++) {
-                const productId = request.body.products[i].productId;
-                await ProductModel.findById<IProduct>(productId)
-                    .session(session)
-                    .exec()
-                    .then(async (existingProduct) => {
-                        existingProduct.productCount -= request.body.products[i].productCount;
-                        await ProductModel.updateOne({ _id: productId }, { $set: existingProduct }, { runValidators: true }).session(session);
-                    })
-                    .catch(error => {
-                        throw error;
-                    });
+        try {
+            if (request.body.products) {
+                for (let i = 0; i < request.body.products.length; i++) {
+                    const productId = request.body.products[i].productId;
+                    const existingProduct = await ProductModel.findById<IProduct>(productId)
+                        .session(session)
+                        .exec();
+
+                    existingProduct.productCount -= request.body.products[i].productCount;
+                    await ProductModel.updateOne({ _id: productId }, { $set: existingProduct }, { runValidators: true })
+                                .session(session)
+                }
+            }
+        } catch (error) {
+            if (error instanceof mongoose.Error.ValidationError) {
+                return validationErrorFunction(error, response);
+            } else {
+                return generalErrorFunction(error, response);
             }
         }
 
-        const orderState = await OrderStateModel.findOne<IOrderState>({ state: OrderStatusEnum.UNCONFIRMED });
+        const orderState = await OrderStateModel.findOne<IOrderState>({ state: OrderStatusEnum.UNCONFIRMED })
+                                    .session(session);
 
         const newOrder = new OrderModel({
             _id: new mongoose.Types.ObjectId(),
@@ -59,42 +63,40 @@ export const createOrder = async (request: express.Request, response: express.Re
             user: request.body.user,
             products: request.body.products,
         });
-
-        newOrder.save()
-            .then((newOrder) => {
-                const customResponse = {
-                    newOrder: {
-                        _id: newOrder._id,
-                        confirmationDate: newOrder.confirmationDate,
-                        orderState: newOrder.orderState,
-                        user: newOrder.user,
-                        products: newOrder.products.map((product) => {
-                            return {
-                                productId: product.productId,
-                                productCount: product.productCount,
-                            };
-                        }),
-                    },
-                    request: {
-                        description: "HTTP request for getting details of created order.",
-                        method: "GET",
-                        url: "http://localhost:8080/orders/" + newOrder._id,
-                    },
-                };
-                return response
-                    .status(StatusCodes.CREATED)
-                    .json(customResponse);
-            })
-            .catch((error) => {
-                throw error;
-            });
-    })
-        .catch((error) => {
+        
+        try {
+            await newOrder.save();
+        } catch(error) {
             if (error instanceof mongoose.Error.ValidationError) {
                 return validationErrorFunction(error, response);
             } else {
                 return generalErrorFunction(error, response);
-            }
+            };
+        }
+
+        const customResponse = {
+            newOrder: {
+                _id: newOrder._id,
+                confirmationDate: newOrder.confirmationDate,
+                orderState: newOrder.orderState,
+                user: newOrder.user,
+                products: newOrder.products.map((product) => {
+                    return {
+                        productId: product.productId,
+                        productCount: product.productCount,
+                    };
+                }),
+            },
+            request: {
+                description: "HTTP request for getting details of created order.",
+                method: "GET",
+                url: "http://localhost:8080/orders/" + newOrder._id,
+            },
+        };
+
+        return response
+                .status(StatusCodes.CREATED)
+                .json(customResponse);
         });
 
     await session.endSession();
@@ -455,7 +457,8 @@ export const updateOrderById = async (request: express.Request, response: expres
     const updateOpts: any = {};
 
     Object.keys(request.body).forEach((key) => {
-        if (!(key in OrderSchema.obj) && key == 'orderState') {
+        console.log(key);
+        if (!(key in OrderSchema.obj) || key == 'orderState') {
             nonExistenKeys.push({
                 message: `Order could not be updated with property: ${key}.`,
                 cause: `Key ${key} could not be found in order document schema.`,
@@ -464,6 +467,8 @@ export const updateOrderById = async (request: express.Request, response: expres
             updateOpts[key] = request.body[key];
         }
     });
+
+    console.log(nonExistenKeys);
 
     if (nonExistenKeys.length != 0) {
         return response
