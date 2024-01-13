@@ -1,7 +1,7 @@
 import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import http from 'http';
+import https from 'https';
 import cors from 'cors'
 import mongoose from 'mongoose';
 import router from './router';
@@ -10,6 +10,7 @@ import path from 'path';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import { StatusCodes } from 'http-status-codes';
+import { readFileSync } from 'node:fs';
 
 dotenv.config({
     path: path.resolve(__dirname, '../.env')
@@ -43,7 +44,7 @@ app.use(cors({
 
 // Use for defined paths for REST resources
 
-app.use('/', router());
+app.use('/v1', router());
 
 // Use for all non-existent paths
 
@@ -55,8 +56,12 @@ app.use((request : express.Request, response : express.Response) => {
             });
 });
 
-const httpServer = http.createServer(app);
+const httpsServer = https.createServer({
+    key: readFileSync(path.resolve(__dirname, '../certs/cert-key.pem')),
+    cert: readFileSync(path.resolve(__dirname, '../certs/cert.pem')),
+    passphrase: process.env.PASSPHRASE,
+}, app);
 
-httpServer.listen(port, () => {
+httpsServer.listen(port, () => {
     console.log(`HTTP server is running at http://localhost:${port}/`);
 });
