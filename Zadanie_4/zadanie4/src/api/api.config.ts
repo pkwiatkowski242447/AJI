@@ -1,25 +1,41 @@
 import axios from 'axios'
-export const API_URL = process.env.REACT_APP_API_URL
-export const TIMEOUT_IN_MS = 30000
-export const DEFAULT_HEADERS = {
-    Accept: 'application/json',
-    'Content-type': 'application/json',
-}
+import {logoutUser} from "./logout";
+
+export const getAuthToken = () => {
+    return window.localStorage.getItem('token');
+};
+
+export const setAuthHeader = (token: string) => {
+    window.localStorage.setItem('token', token);
+};
+
 export const apiWithConfig = axios.create({
-    baseURL: API_URL,
-    timeout: TIMEOUT_IN_MS,
-    headers: DEFAULT_HEADERS,
+    baseURL: 'https://localhost:8080/v1',
+    headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+    },
 })
 
-apiWithConfig.interceptors.request.use((config) => {
-    const token = window.localStorage.getItem('token')
-    if (token && config.headers) config.headers.Authorization = JSON.parse(token)
-    return config
-})
+apiWithConfig.interceptors.request.use(
+    function (config) {
+        const token = getAuthToken();
+        if (token != null && token != "null") {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    function (error) {
+        console.error(error);
+    }
+)
 
 apiWithConfig.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        return Promise.reject(error)
+    function (response) {
+        return response;
     },
+    function (error) {
+        console.error(error)
+        logoutUser();
+    }
 )

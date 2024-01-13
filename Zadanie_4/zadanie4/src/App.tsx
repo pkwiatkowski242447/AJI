@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
+import './App.css'
+import { AccountType } from './types/Account'
+import {api} from "./api/api";
 
-function App() {
+export const App = () => {
+  const [user, setUser] = useState<AccountType>()
+  const [loading, setLoading] = useState(true)
+
+  const logIn = async () => {
+    setLoading(true)
+    try {
+      const data = await api.logIn("admin@gmail.com", "password")
+      console.log(data.data)
+    } catch (error) {
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    logIn()
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+      <div className="App">
+        {loading && <p>Loading...</p>}
+      </div>
+  )
 }
-
-export default App;
