@@ -16,7 +16,4 @@ export const api = {
         return apiWithConfig.post('/users/login', loginData)
     },
 
-    getCurrentAccount: (): ApiResponseType<AccountType> => {
-        return apiWithConfig.get('/accounts/existing_account')
-    },
 }
