@@ -1,30 +1,12 @@
-import React, { useEffect, useState } from 'react'
 import './App.css'
-import { AccountType } from './types/Account'
-import {api} from "./api/api";
+import { BrowserRouter as Router } from 'react-router-dom'
+import { RoutesComponent } from './router/Routes/'
+import { AccountStateContextProvider } from './context/AccountContext'
 
-export const App = () => {
-  const [user, setUser] = useState<AccountType>()
-  const [loading, setLoading] = useState(true)
-
-  const logIn = async () => {
-    setLoading(true)
-    try {
-      const data = await api.logIn("admin@gmail.com", "password")
-      console.log(data.data)
-    } catch (error) {
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    logIn()
-  }, [])
-
-  return (
-      <div className="App">
-        {loading && <p>Loading...</p>}
-      </div>
-  )
-}
+export const App = () => (
+    <Router>
+        <AccountStateContextProvider>
+            <RoutesComponent />
+        </AccountStateContextProvider>
+    </Router>
+)
