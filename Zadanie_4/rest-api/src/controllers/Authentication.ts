@@ -106,92 +106,90 @@ const createUser = async (request : express.Request, response : express.Response
 // Login method
 
 export const loginUser = async (request : express.Request, response : express.Response) => {
-    UserModel.findOne<IUser>({ email: request.body.email })
+
+    try {
+        const userDocument = await UserModel.findOne<IUser>({ email: request.body.email })
         .select(' _id username email phoneNumber authentication ')
-        .exec()
-        .then((user) => {
-            if (user) {
-                bcrypt.compare(request.body.password, user.authentication.password, async function (error, result) {
-                    if (error) {
-                        return generalErrorFunction(error, response);
-                    } else if (result) {
-                        const accessToken = generateAccessToken(user);
-                        const refreshToken = generateRefreshToken(user);
+        .exec();
 
-                        user.authentication.refreshToken = refreshToken;
-                        UserModel.updateOne({ _id: user._id }, user)
-                            .exec()
-                            .catch(error => {
-                                return generalErrorFunction(error, response);
-                            });
+        if (userDocument) {
+            bcrypt.compare(request.body.password, userDocument.authentication.password, async function (error, result) {
+                if (error) {
+                    return generalErrorFunction(error, response);
+                } else if (result) {
+                    const accessToken = generateAccessToken(userDocument);
+                    const refreshToken = generateRefreshToken(userDocument);
 
-                        response.cookie('jwtreftoken', refreshToken, { 
-                            httpOnly: true,
-                            sameSite: "none",
-                            secure: true,
-                            maxAge: 1000 * 60 * 45,
-                        });
+                    userDocument.authentication.refreshToken = refreshToken;
+                    UserModel.updateOne({ _id: userDocument._id }, userDocument)
+                        .exec()
 
-                        response
+                    response.cookie('jwtreftoken', refreshToken, { 
+                        httpOnly: true,
+                        sameSite: "none",
+                        secure: true,
+                        maxAge: 1000 * 60 * 45,
+                    });
+
+                    return response
                             .status(StatusCodes.OK)
                             .json({
                                 message: 'Authentication succedded.',
                                 accessToken: accessToken,
                             });
-                    } else {
-                        return response
-                                .status(StatusCodes.UNAUTHORIZED)
-                                .json({
-                                    message: 'Authentication failed since email or password is incorrect.',
-                                });
-                    }
-                });
-            } else {
-                return response
-                        .status(StatusCodes.UNAUTHORIZED)
-                        .json({
-                            message: 'Authentication failed since email or password is incorrect.',
-                        });
-            }
-        })
-        .catch(error => {
-            return generalErrorFunction(error, response);
-        });
+                } else {
+                    return response
+                            .status(StatusCodes.UNAUTHORIZED)
+                            .json({
+                                message: 'Authentication failed since email or password is incorrect.',
+                            });
+                }
+            });
+        } else {
+            return response
+                    .status(StatusCodes.UNAUTHORIZED)
+                    .json({
+                        message: 'Authentication failed since email or password is incorrect.',
+                    });
+        }
+    } catch (error) {
+        return generalErrorFunction(error, response);
+    }
 };
 
 // Refresh access token method
 
-export const useRefreshToken = (request : express.Request, response : express.Response) => {
+export const useRefreshToken = async (request : express.Request, response : express.Response) => {
     const cookies = request.cookies;
 
     if (cookies?.jwtreftoken) {
         const refreshToken = cookies.jwtreftoken;
 
-        UserModel.findOne<IUser>({ 'authentication.refreshToken': refreshToken })
+        try {
+            const userDocument = await UserModel.findOne<IUser>({ 'authentication.refreshToken': refreshToken })
             .select(' _id username email role')
-            .exec()
-            .then(existingUser => {
-                if (!existingUser) {
-                    return forbiddenErrorFunction(response);
-                } else {
-                    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error : Error) => {
-                        if (error) {
-                            return forbiddenErrorFunction(response);
-                        } else {
-                            const accessToken = generateAccessToken(existingUser);
-                            return response
-                                    .status(StatusCodes.OK)
-                                    .json({
-                                        message: 'Access token has been refreshed.',
-                                        accessToken: accessToken,
-                                    });
-                        }
-                    });
-                }
-            })
-            .catch(error => {
-                return generalErrorFunction(error, response);
-            });
+            .exec();
+
+            if (!userDocument) {
+                return forbiddenErrorFunction(response);
+            } else {
+                jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error : Error) => {
+                    if (error) {
+                        return forbiddenErrorFunction(response);
+                    } else {
+                        const accessToken = generateAccessToken(userDocument);
+                        return response
+                                .status(StatusCodes.OK)
+                                .json({
+                                    message: 'Access token has been refreshed.',
+                                    accessToken: accessToken,
+                                });
+                    }
+                });
+            }
+        } catch (error) {
+            return generalErrorFunction(error, response);
+        }
     } else {
         return authorizationErrorFunction(response);
     }
@@ -199,28 +197,25 @@ export const useRefreshToken = (request : express.Request, response : express.Re
 
 // Delete refresh token method
 
-export const deleteRefreshToken = (request : express.Request, response : express.Response) => {
+export const deleteRefreshToken = async (request : express.Request, response : express.Response) => {
     const cookies = request.cookies;
     if (cookies?.jwtreftoken) {
         const refreshToken = cookies.jwtreftoken;
 
-        UserModel.findOne<IUser>({ 'authentication.refreshToken': refreshToken })
+        try {
+            const userDocument = await UserModel.findOne<IUser>({ 'authentication.refreshToken': refreshToken })
             .exec()
-            .then(existingUser => {
-                if (existingUser) {
-                    delete existingUser.authentication.refreshToken;
 
-                    UserModel.updateOne<IUser>({ _id: existingUser._id }, existingUser)
-                        .exec()
-                        .catch(error => {
-                            throw error;
-                        });
-                }
-                return clearCookieAndSendResponse(response);
-            })
-            .catch(error => {
-                return generalErrorFunction(error, response);
-            });
+            if (userDocument) {
+                delete userDocument.authentication.refreshToken;
+
+                UserModel.updateOne<IUser>({ _id: userDocument._id }, userDocument)
+                    .exec()
+            }
+            return clearCookieAndSendResponse(response);
+        } catch (error) {
+            return generalErrorFunction(error, response);
+        }
     } else {
         return response
                 .status(StatusCodes.OK)
