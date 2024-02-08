@@ -29,7 +29,7 @@ export const isAdmin = (request : express.Request, response : express.Response, 
     isCorrectUserType(request, response, new Array(UserRole.ADMIN));
 };
 
-// Method for checking if user is of correct userType, as opposed to user types passed in userRoles arrray.
+// Method for checking if main is of correct userType, as opposed to main types passed in userRoles arrray.
 
 export const isCorrectUserType = (request : express.Request, response : express.Response, userRoles : Array<String>) => {
     let requestRole;

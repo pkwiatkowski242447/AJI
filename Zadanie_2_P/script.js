@@ -109,7 +109,7 @@ let updateTodoList = function () {
     for (let todo in todoList) {
         // Task is added to todoList as long as filter is an empty string or its title or description includes text
         // input by the use to the text filter. If none of these are met - then a task is not added to the todoListView div.
-        // First condition in this conditional statement must remain with == operator since if user does not input anything
+        // First condition in this conditional statement must remain with == operator since if main does not input anything
         // it could result in getting null value and as a result - not add any task to the todoListView div.
         let dueDateValue = todoList[todo].dueDate
         let flag = checkDate(dateStartValue, dateEndValue, dueDateValue)
