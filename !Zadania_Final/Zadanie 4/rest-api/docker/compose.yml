@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+
+  mongo_1:
+    build: .
+    image: mongoaji:6.0.2
+    volumes:
+      - ajinode1:/data/db
+    container_name: ajinode1
+    hostname: ajinode1
+    networks:
+      - mongonet
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+    command: --config /etc/mongod.conf --port 27017
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27017", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
+  mongo_2:
+    build: .
+    image: mongoaji:6.0.2
+    volumes:
+      - ajinode2:/data/db
+    container_name: ajinode2
+    hostname: ajinode2
+    networks:
+      - mongonet
+    ports:
+      - "27018:27018"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+    command: --config /etc/mongod.conf --port 27018
+    healthcheck:
+      test: [ "CMD", "mongosh", "--port", "27018", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
+  mongo_3:
+    build: .
+    image: mongoaji:6.0.2
+    volumes:
+      - ajinode3:/data/db
+    container_name: ajinode3
+    hostname: ajinode3
+    networks:
+      - mongonet
+    ports:
+      - "27019:27019"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+    command: --config /etc/mongod.conf --port 27019
+    healthcheck:
+      test: [ "CMD", "mongosh", "--port", "27019", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
+  mongoinit:
+    build: .
+    image: ajicustom:6.0.2
+    volumes:
+      - ajinodeinit:/data/db
+    hostname: ajiinit
+    container_name: ajiinit
+    networks:
+      - mongonet
+    depends_on:
+      mongo_1:
+        condition: service_healthy
+      mongo_2:
+        condition: service_healthy
+      mongo_3:
+        condition: service_healthy
+    command: >
+      mongosh --host ajinode1:27017 --username admin --password adminpassword --authenticationDatabase admin --eval
+      '
+      rs.initiate(
+        {
+          "_id": "ajiReplicaSet",
+          "members": [
+            { _id: 0, host : "ajinode1:27017" },
+            { _id: 1, host : "ajinode2:27018" },
+            { _id: 2, host : "ajinode3:27019" }
+          ]
+        }
+      );
+      '
+
+volumes:
+  ajinode1:
+  ajinode2:
+  ajinode3:
+  ajinodeinit:
+
+networks:
+  mongonet: {}
